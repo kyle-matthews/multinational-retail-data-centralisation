@@ -8,11 +8,10 @@
 
 1. Introduction
 2. Installation Instructions
-3. Lessons Learned
-4. Usage Instructions
-5. File Structure
-6. License Information
-
+3. Usage Instructions
+4. File Structure
+5. License Information
+6. Lessons Learned
 
 ### 1. Introduction
 By trade I am currently a Primary School Teacher in the UK, but I am massively keen on reskilling and retraining to become a cloud/data engineer of some sort. The task is rather daunting with two young kittens and an extortionate mortgage to pay off, but here we are. I will begin with the words that I often use to sell outrageous or unbelievable ideas to my class with, 'lets say...'
