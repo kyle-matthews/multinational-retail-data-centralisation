@@ -45,3 +45,37 @@ class DatabaseConnector:
         inspect_engine =  inspect(engine)
         table_names = inspect_engine.get_table_names()
         return table_names
+
+    def upload_to_db(self, df, table_name):
+        """
+        The `upload_to_db` function uploads a pandas DataFrame to a PostgreSQL database table.
+        
+        :param df: The parameter `df` is a pandas DataFrame that contains the data you want to upload to the
+        database. It should have columns that match the table structure in the database
+        :param table_name: The `table_name` parameter is a string that specifies the name of the table in
+        the database where you want to upload the data
+        """
+         
+        conn = psycopg2.connect(
+            host=self.host,
+            database=self.database,
+            user=self.user,
+            password=self.password,
+            port=self.port
+        )
+        cursor = conn.cursor()
+
+
+        df_columns = ', '.join(df.columns)
+        df_values = [tuple(row) for row in df.values]
+        insert_query = f"""
+        INSERT INTO {table_name} ({df_columns})
+        VALUES {', '.join(['%s'] * len(df.columns))}
+        """
+        cursor.executemany(insert_query, df_values)
+        conn.commit()
+
+        cursor.close()
+        conn.close()
+
+        print(f"Data successfully uploaded to the '{table_name}' table.")
