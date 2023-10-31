@@ -15,6 +15,11 @@ class DatabaseConnector:
     # from the return of read_db_creds and initialise and return an sqlalchemy database engine.
 
     def init_db_engine(self):
+        """
+        The function `init_db_engine` initializes a database engine using the credentials read from a
+        file.
+        :return: a SQLAlchemy engine object.
+        """
         db_creds = self.read_db_creds()
         db_url = sqlalchemy.engine.url.URL(
                      
@@ -29,6 +34,14 @@ class DatabaseConnector:
         
         engine = sqlalchemy.create_engine(db_url)
         return engine
+    
 
-
-        return 
+    def list_db_tables(self):
+        """
+        The function `list_db_tables` returns a list of table names in a database.
+        :return: a list of table names in the database.
+        """
+        engine = self.init_db_engine()
+        inspect_engine =  inspect(engine)
+        table_names = inspect_engine.get_table_names()
+        return table_names
