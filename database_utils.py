@@ -1,5 +1,6 @@
 import yaml
 import sqlalchemy
+import psycopg2
 
 class DatabaseConnector:
     def read_db_creds(self):
