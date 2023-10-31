@@ -16,7 +16,7 @@ class DatabaseConnector:
 
     def init_db_engine(self):
         """
-        The function `init_db_engine` initializes a database engine using the credentials read from a
+        The function `init_db_engine` initialises a database engine using the credentials read from a
         file.
         :return: a SQLAlchemy engine object.
         """
