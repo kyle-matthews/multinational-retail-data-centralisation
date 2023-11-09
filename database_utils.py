@@ -7,10 +7,10 @@ class DatabaseConnector:
         """
         The function reads database credentials from a YAML file.
         """
-        with open('db_creds.yaml', 'r') as stream:
-            data_loaded = yaml.safe_load(stream)
+        with open('db_creds.yaml', 'r') as file:
+            db_credentials = yaml.safe_load(file)
 
-        return data_loaded
+        return db_credentials
     
     #Now create a method init_db_engine which will read the credentials 
     # from the return of read_db_creds and initialise and return an sqlalchemy database engine.
@@ -39,13 +39,14 @@ class DatabaseConnector:
 
     def list_db_tables(self):
         """
-        The function `list_db_tables` returns a list of table names in a database.
-        :return: a list of table names in the database.
+        The function `list_db_tables` retrieves a list of table names from a PostgreSQL database.
+        :return: a list of table names in the public schema of the database.
         """
         engine = self.init_db_engine()
-        inspect_engine =  inspect(engine)
-        table_names = inspect_engine.get_table_names()
-        return table_names
+        with engine.connect() as connection:
+            result = connection.execute("SELECT table_name FROM information_schema.tables WHERE table_schema='public';")
+            tables = [row[0] for row in result]
+        return tables
 
     def upload_to_db(self, df, table_name):
         """
@@ -57,13 +58,16 @@ class DatabaseConnector:
         the database where you want to upload the data
         """
          
+
+        db_creds = self.read_db_creds()
+        # Load credentials from YAML file
         conn = psycopg2.connect(
-            host=self.host,
-            database=self.database,
-            user=self.user,
-            password=self.password,
-            port=self.port
-        )
+            host=db_creds['host'],
+            database=db_creds['database'],
+            user=db_creds['username'],
+            password=db_creds['password'],
+            port=db_creds['port'] )
+            
         cursor = conn.cursor()
 
 
