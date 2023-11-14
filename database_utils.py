@@ -1,5 +1,6 @@
 import yaml
-import sqlalchemy
+from sqlalchemy import inspect
+from sqlalchemy import create_engine
 import psycopg2
 
 class DatabaseConnector:
@@ -22,31 +23,33 @@ class DatabaseConnector:
         :return: a SQLAlchemy engine object.
         """
         db_creds = self.read_db_creds()
-        db_url = sqlalchemy.engine.url.URL(
-                     
-            drivername=db_creds['drivername'],
-            username=db_creds['username'],
-            password=db_creds['password'],
-            host=db_creds['host'],
-            port=db_creds['port'],
-            database=db_creds['database']
+        """db_url = sqlalchemy.engine.url.URL(
+            
+            username=db_creds['RDS_USER'],
+            password=db_creds['RDS_PASSWORD'],
+            host=db_creds['RDS_HOST'],
+            port=db_creds['RDS_PORT'],
+            database=db_creds['RDS_DATABASE']
 
-                )
+                )"""
+        db_url = f"postgresql+psycopg2://{db_creds['RDS_USER']}:{db_creds['RDS_PASSWORD']}@{db_creds['RDS_HOST']}:{db_creds['RDS_PORT']}/{db_creds['RDS_DATABASE']}"
         
-        engine = sqlalchemy.create_engine(db_url)
+        engine = create_engine(db_url)
+        engine.connect()
         return engine
     
 
     def list_db_tables(self):
-        """
-        The function `list_db_tables` retrieves a list of table names from a PostgreSQL database.
-        :return: a list of table names in the public schema of the database.
-        """
+# The code block you provided is defining a method called `list_db_tables` in the `DatabaseConnector`
+# class. This method is responsible for connecting to the database, inspecting the tables in the
+# database, and returning a list of table names.
         engine = self.init_db_engine()
-        with engine.connect() as connection:
-            result = connection.execute("SELECT table_name FROM information_schema.tables WHERE table_schema='public';")
-            tables = [row[0] for row in result]
+        table_inspector = inspect(engine)
+        tables = table_inspector.get_table_names()
+
+        print(tables)
         return tables
+
 
     def upload_to_db(self, df, table_name):
         """

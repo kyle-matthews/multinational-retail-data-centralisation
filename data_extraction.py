@@ -2,19 +2,21 @@ import pandas as pd
 from database_utils import DatabaseConnector
 
 
-# The `DataExtractor` class provides methods for reading data from an RDS table and uploading data to
-# a database table.
+"""The `DataExtractor` class provides methods for reading data from an RDS table and uploading data to
+a database table."""
 class DataExtractor:
-        def read_rds_table(self, db_connector, table_name):
-            engine = db_connector.init_db_engine()
-            query = f"SELECT * FROM {table_name};"
-            df = pd.read_sql(query, engine)
+        def read_rds_table(self, engine, table_name):
+            
+            """query = fSELECT * FROM {table_name};"""
+            df = pd.read_sql_table(table_name, engine)
             return df
 
 
-        def upload_to_db(self, df, table_name, engine):
+        """def upload_to_db(self, df, table_name, engine):
             engine = db_connector.init_db_engine()
             df.to_sql(table_name, engine, if_exists='replace', index=False)
+
+            db_connector_instance.list_db_tables()"""
 
 
 
@@ -30,3 +32,4 @@ dim_users = data_extractor.read_rds_table(db_connector, table_name)
 
 # Upload data to the database
 data_extractor.upload_to_db(dim_users, table_name, db_connector)
+
