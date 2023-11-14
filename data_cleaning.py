@@ -1,22 +1,31 @@
 import pandas as pd
 import numpy as np
 class DataCleaning:
-    def clean_user_data(self, user_data):
+
+    def clean_user_data(self, df):
         """
-        The function `clean_user_data` cleans a DataFrame by dropping rows with missing values in the 'date'
-        and 'age' columns.
-        
-        :param user_data: The `user_data` parameter is a pandas DataFrame that contains user data. It is
-        assumed that the DataFrame has columns named 'date' and 'age'. The 'date' column is expected to
-        contain date values, and the 'age' column is expected to contain numeric age values
-        :return: the cleaned user data, which is a pandas DataFrame.
+        The `clean_user_data` function cleans and filters a user's data by handling null values, parsing
+        dates, converting columns to numeric, and filtering rows based on a condition.
+        :return: The `clean_user_data` function returns the `user_data` DataFrame after performing various
+        cleaning operations on it.
         """
-        user_data = user_data.dropna()
+        self.handle_null_values()
+        self.parse_dates()
+        self.convert_to_numeric()
+        self.filter_wrong_rows()
 
-        user_data['date'] = pd.to_datetime(user_data['date'], errors='coerce')
-        user_data = user_data.dropna(subset=['date'])
+        return self.user_data
 
-        user_data['age'] = pd.to_numeric(user_data['age'], errors='coerce')
-        user_data = user_data.dropna(subset=['age'])
+    def handle_null_values(self):
+        self.user_data.fillna(method='ffill', inplace=True)
 
-        return user_data
+    def parse_dates(self):
+        self.user_data['date_column'] = pd.to_datetime(self.user_data['date_column'], errors='coerce')
+
+    def convert_to_numeric(self):
+        self.user_data['numeric_column'] = pd.to_numeric(self.user_data['numeric_column'], errors='coerce')
+
+    def filter_wrong_rows(self):
+        self.user_data = self.user_data[self.user_data['condition_column'] == 'desired_condition']
+
+        return self.user_data

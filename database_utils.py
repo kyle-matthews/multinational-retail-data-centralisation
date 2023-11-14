@@ -35,7 +35,6 @@ class DatabaseConnector:
         db_url = f"postgresql+psycopg2://{db_creds['RDS_USER']}:{db_creds['RDS_PASSWORD']}@{db_creds['RDS_HOST']}:{db_creds['RDS_PORT']}/{db_creds['RDS_DATABASE']}"
         
         engine = create_engine(db_url)
-        engine.connect()
         return engine
     
 
@@ -65,11 +64,11 @@ class DatabaseConnector:
         db_creds = self.read_db_creds()
         # Load credentials from YAML file
         conn = psycopg2.connect(
-            host=db_creds['host'],
-            database=db_creds['database'],
-            user=db_creds['username'],
-            password=db_creds['password'],
-            port=db_creds['port'] )
+            username=db_creds['RDS_USER'],
+            password=db_creds['RDS_PASSWORD'],
+            host=db_creds['RDS_HOST'],
+            port=db_creds['RDS_PORT'],
+            database=db_creds['RDS_DATABASE'] )
             
         cursor = conn.cursor()
 
@@ -80,7 +79,7 @@ class DatabaseConnector:
         INSERT INTO {table_name} ({df_columns})
         VALUES {', '.join(['%s'] * len(df.columns))}
         """
-        cursor.executemany(insert_query, df_values)
+        cursor.execute(insert_query, df_values)
         conn.commit()
 
         cursor.close()
