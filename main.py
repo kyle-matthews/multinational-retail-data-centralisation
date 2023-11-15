@@ -6,13 +6,13 @@ extractor = DataExtractor()
 cleaner = DataCleaning()
 #print(connector.read_db_creds())
 
-#connector.list_db_tables()
+connector.list_db_tables()
+
 
 
 
 table_name_2 = 'legacy_users'
 legacy_users = extractor.read_rds_table(connector, table_name_2)
-
-cleaned_data = cleaner.clean_user_data(legacy_users)
-
-print(cleaned_data)
+#Creates a CSV so all data can be read.
+legacy_users_csv = legacy_users.to_csv()
+print(legacy_users_csv)
