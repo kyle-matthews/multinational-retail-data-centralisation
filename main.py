@@ -16,6 +16,5 @@ table_name = 'legacy_users'
 legacy_users = extractor.read_rds_table(connector, table_name)
 #print(legacy_users)
 
-cleaner.clean_user_data(legacy_users)
-
-print(legacy_users)
+clean_legacy_users = cleaner.clean_user_data(legacy_users)
+print(clean_legacy_users)
