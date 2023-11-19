@@ -53,35 +53,36 @@ class DatabaseConnector:
     def upload_to_db(self, df, table_name):
         """
         The `upload_to_db` function uploads a pandas DataFrame to a PostgreSQL database table.
-        
+
         :param df: The parameter `df` is a pandas DataFrame that contains the data you want to upload to the
         database. It should have columns that match the table structure in the database
         :param table_name: The `table_name` parameter is a string that specifies the name of the table in
         the database where you want to upload the data
         """
-         
-
         db_creds = self.read_db_creds()
-        # Load credentials from YAML file
+
+        # Connect to the database
         conn = psycopg2.connect(
-            username=db_creds['RDS_USER'],
+            user=db_creds['RDS_USER'],
             password=db_creds['RDS_PASSWORD'],
             host=db_creds['RDS_HOST'],
             port=db_creds['RDS_PORT'],
-            database=db_creds['RDS_DATABASE'] )
-            
+            database=db_creds['RDS_DATABASE']
+        )
         cursor = conn.cursor()
 
+        # Prepare the SQL query
+        columns = ', '.join(df.columns)
+        placeholders = ', '.join(['%s' for _ in range(len(df.columns))])
+        insert_query = f"INSERT INTO {table_name} ({columns}) VALUES ({placeholders})"
 
-        df_columns = ', '.join(df.columns)
-        df_values = [tuple(row) for row in df.values]
-        insert_query = f"""
-        INSERT INTO {table_name} ({df_columns})
-        VALUES {', '.join(['%s'] * len(df.columns))}
-        """
-        cursor.execute(insert_query, df_values)
+        # Execute the query
+        cursor.executemany(insert_query, df.values.tolist())
+        
+        # Commit the changes
         conn.commit()
 
+        # Close the cursor and connection
         cursor.close()
         conn.close()
 
