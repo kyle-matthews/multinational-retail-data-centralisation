@@ -4,15 +4,18 @@ from data_cleaning import DataCleaning
 connector = DatabaseConnector()
 extractor = DataExtractor()
 cleaner = DataCleaning()
-#print(connector.read_db_creds())
+
+print(connector.read_db_creds())
 
 connector.list_db_tables()
 
 
 
 
-table_name_2 = 'legacy_users'
-legacy_users = extractor.read_rds_table(connector, table_name_2)
-#Creates a CSV so all data can be read.
-legacy_users_csv = legacy_users.to_csv()
-print(legacy_users_csv)
+table_name = 'legacy_users'
+legacy_users = extractor.read_rds_table(connector, table_name)
+#print(legacy_users)
+
+cleaner.clean_user_data(legacy_users)
+
+print(legacy_users)
