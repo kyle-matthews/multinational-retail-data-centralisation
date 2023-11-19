@@ -16,6 +16,11 @@ class DatabaseConnector:
     #Now create a method init_db_engine which will read the credentials 
     # from the return of read_db_creds and initialise and return an sqlalchemy database engine.
 
+    def read_pgadmin_creds(self):
+        with open('PgAdmin.yaml', 'r') as file:
+            pg_admin_creds = yaml.safe_load(file)
+        return pg_admin_creds
+
     def init_db_engine(self):
         """
         The function `init_db_engine` initialises a database engine using the credentials read from a
@@ -59,31 +64,34 @@ class DatabaseConnector:
         :param table_name: The `table_name` parameter is a string that specifies the name of the table in
         the database where you want to upload the data
         """
-        db_creds = self.read_db_creds()
+        pg_admin = self.read_pgadmin_creds()
 
         # Connect to the database
-        conn = psycopg2.connect(
-            user=db_creds['RDS_USER'],
-            password=db_creds['RDS_PASSWORD'],
-            host=db_creds['RDS_HOST'],
-            port=db_creds['RDS_PORT'],
-            database=db_creds['RDS_DATABASE']
-        )
-        cursor = conn.cursor()
+        conn = psycopg2.connect(host=pg_admin['HOST'],
+                                dbname=pg_admin['DB_NAME'],
+                                user=pg_admin['USER'],
+                                password=pg_admin['PASSWORD'])
+        cur = conn.cursor()
 
         # Prepare the SQL query
-        columns = ', '.join(df.columns)
-        placeholders = ', '.join(['%s' for _ in range(len(df.columns))])
-        insert_query = f"INSERT INTO {table_name} ({columns}) VALUES ({placeholders})"
+        columns = ', '.join(col for col in df.columns if col != 'index')
+        placeholders = ', '.join(['%s' for _ in range(len(df.columns) - 1)])  # Exclude 'index' column
+        update_columns = ', '.join(f"{col}=EXCLUDED.{col}" for col in df.columns if col != 'index')
+        insert_query = f"""
+        INSERT INTO {table_name} ({columns})
+        VALUES ({placeholders})
+        ON CONFLICT ('index') DO UPDATE
+        SET {update_columns}
+        """
 
         # Execute the query
-        cursor.executemany(insert_query, df.values.tolist())
+        cur.executemany(insert_query, df.values.tolist())
         
         # Commit the changes
         conn.commit()
 
         # Close the cursor and connection
-        cursor.close()
+        cur.close()
         conn.close()
 
         print(f"Data successfully uploaded to the '{table_name}' table.")

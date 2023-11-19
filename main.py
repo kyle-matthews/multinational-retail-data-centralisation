@@ -5,15 +5,17 @@ connector = DatabaseConnector()
 extractor = DataExtractor()
 cleaner = DataCleaning()
 
-print(connector.read_db_creds())
-
 connector.list_db_tables()
 
 table_name = 'legacy_users'
-dim_users = extractor.read_rds_table(connector, table_name)
+df = extractor.read_rds_table(connector, table_name)
 #print(legacy_users)
 
-clean_legacy_users = cleaner.clean_user_data(dim_users)
-#print(clean_legacy_users)
+clean_df = cleaner.clean_user_data(df)
 
-connector.upload_to_db(clean_legacy_users, dim_users)
+
+connector.upload_to_db(clean_df, 'dim_users')
+
+#payment_data = extractor.retrieve_pdf_data('https://data-handling-public.s3.eu-west-1.amazonaws.com/card_details.pdf')
+
+#print(payment_data)
