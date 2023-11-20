@@ -13,14 +13,14 @@ class DatabaseConnector:
         return db_credentials
     
 
-    def init_db_engine(self):
+    def init_db_engine(self, creds):
         """
         The `init_db_engine` function initializes a database engine using the credentials read from a file
         and returns the engine.
         :return: The `self.engine` object is being returned.
         """
 
-        creds = self.read_db_creds()
+        creds = self.read_db_creds(creds)
         
         DATABASE_TYPE = 'postgresql'
         DBAPI = 'psycopg2'
@@ -49,7 +49,7 @@ class DatabaseConnector:
 
     def upload_to_db(self, df, table_name):
 
-        engine = self.init_db_engine()
+        engine = self.init_db_engine('pgAdmin.yaml')
 
         df.to_sql(name=table_name, con=engine, if_exists='replace', index=False)
         print('Data successfully uploaded.')

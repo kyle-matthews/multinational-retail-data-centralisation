@@ -7,7 +7,7 @@ import tabula
 a database table."""
 class DataExtractor:
         def read_rds_table(self, db_connector, table_name):
-            engine = db_connector.init_db_engine()
+            engine = db_connector.init_db_engine('db_creds.yaml')
             df = pd.read_sql_table(table_name, engine)
             return df
         
