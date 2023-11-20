@@ -1,6 +1,5 @@
 import yaml
-from sqlalchemy import inspect
-from sqlalchemy import create_engine
+import sqlalchemy
 import psycopg2
 
 class DatabaseConnector:
@@ -39,7 +38,7 @@ class DatabaseConnector:
                 )"""
         db_url = f"postgresql+psycopg2://{db_creds['RDS_USER']}:{db_creds['RDS_PASSWORD']}@{db_creds['RDS_HOST']}:{db_creds['RDS_PORT']}/{db_creds['RDS_DATABASE']}"
         
-        engine = create_engine(db_url)
+        engine = sqlalchemy.create_engine(db_url)
         return engine
     
 
@@ -48,7 +47,7 @@ class DatabaseConnector:
 # class. This method is responsible for connecting to the database, inspecting the tables in the
 # database, and returning a list of table names.
         engine = self.init_db_engine()
-        table_inspector = inspect(engine)
+        table_inspector = sqlalchemy.inspect(engine)
         tables = table_inspector.get_table_names()
 
         print(tables)
@@ -56,14 +55,7 @@ class DatabaseConnector:
 
 
     def upload_to_db(self, df, table_name):
-        """
-        The `upload_to_db` function uploads a pandas DataFrame to a PostgreSQL database table.
 
-        :param df: The parameter `df` is a pandas DataFrame that contains the data you want to upload to the
-        database. It should have columns that match the table structure in the database
-        :param table_name: The `table_name` parameter is a string that specifies the name of the table in
-        the database where you want to upload the data
-        """
         pg_admin = self.read_pgadmin_creds()
 
         # Connect to the database
@@ -73,25 +65,8 @@ class DatabaseConnector:
                                 password=pg_admin['PASSWORD'])
         cur = conn.cursor()
 
-        # Prepare the SQL query
-        columns = ', '.join(col for col in df.columns if col != 'index')
-        placeholders = ', '.join(['%s' for _ in range(len(df.columns) - 1)])  # Exclude 'index' column
-        update_columns = ', '.join(f"{col}=EXCLUDED.{col}" for col in df.columns if col != 'index')
-        insert_query = f"""
-        INSERT INTO {table_name} ({columns})
-        VALUES ({placeholders})
-        ON CONFLICT ('index') DO UPDATE
-        SET {update_columns}
-        """
+        engine = self.init_db_engine()
 
-        # Execute the query
-        cur.executemany(insert_query, df.values.tolist())
+        df.to_sql(name=table_name, con=engine, if_exists='replace')
+        print('Data successfully uploaded.')
         
-        # Commit the changes
-        conn.commit()
-
-        # Close the cursor and connection
-        cur.close()
-        conn.close()
-
-        print(f"Data successfully uploaded to the '{table_name}' table.")
