@@ -25,8 +25,11 @@ class DataCleaning:
         :param df: The parameter `df` is a pandas DataFrame that contains card data
         """
         df = df.dropna()
-        #df = df.drop_duplicates(subset=['index'], keep='first')
+        
+        
         df = df.reset_index(drop=True)
+        
         df['card_number'] = pd.to_numeric(df['card_number'], errors='coerce')
-        df['expiry_date'] = pd.to_datetime(df['expiry_date'], format='%m%Y', errors='coerce')
-        df = df.dropna(subset=['expiry_date'])
+        
+        df['expiry_date'] = pd.to_datetime(df['expiry_date'], errors='ignore', format='%m%y')
+        return df
