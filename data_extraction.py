@@ -7,7 +7,6 @@ import requests
 """The `DataExtractor` class provides methods for reading data from an RDS table and uploading data to
 a database table."""
 class DataExtractor:
-        
 
         def read_rds_table(self, db_connector, table_name):
             engine = db_connector.init_db_engine('db_creds.yaml')
@@ -19,6 +18,4 @@ class DataExtractor:
               payment_data_df = payment_data[0]
               return payment_data_df
         
-        def list_number_of_stores(self, number_stores_endpoint):
-            response = requests.get(number_stores_endpoint, headers=self.header)
-            return response.json().get('number_of_stores')
+
