@@ -8,7 +8,6 @@ import requests
 a database table."""
 class DataExtractor:
         
-        header = {'x-api-key': 'yFBQbwXe9J3sd6zWVAMrK6lcxxr0q1lr2PT6DDMX'}
 
         def read_rds_table(self, db_connector, table_name):
             engine = db_connector.init_db_engine('db_creds.yaml')
