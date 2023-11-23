@@ -16,9 +16,12 @@ df = extractor.read_rds_table(connector, 'legacy_users')
 payment_data_df = extractor.retrieve_pdf_data('https://data-handling-public.s3.eu-west-1.amazonaws.com/card_details.pdf')
 print(payment_data_df)
 print(type(payment_data_df))
-#clean_payment_data = cleaner.clean_card_data(payment_data_df)
+clean_payment_data = cleaner.clean_card_data(payment_data_df)
 
 #print(clean_payment_data)
 
 creds = 'PgAdmin.yaml'
-connector.upload_to_db(payment_data_df, 'dim_card_details')
+connector.upload_to_db(clean_payment_data, 'dim_card_details')
+
+number_of_stores = extractor.list_number_of_stores('https://aqj7u5id95.execute-api.eu-west-1.amazonaws.com/prod/number_stores')
+print(number_of_stores)
