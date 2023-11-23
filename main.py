@@ -20,8 +20,8 @@ clean_payment_data = cleaner.clean_card_data(payment_data_df)
 
 #print(clean_payment_data)
 
-creds = 'PgAdmin.yaml'
-connector.upload_to_db(clean_payment_data, 'dim_card_details')
+#creds = 'PgAdmin.yaml'
+#connector.upload_to_db(clean_payment_data, 'dim_card_details')
 
-#number_of_stores = extractor.list_number_of_stores('https://aqj7u5id95.execute-api.eu-west-1.amazonaws.com/prod/number_stores')
-#print(number_of_stores)
+number_of_stores = extractor.list_number_of_stores('https://aqj7u5id95.execute-api.eu-west-1.amazonaws.com/prod/number_stores')
+print(number_of_stores.text)

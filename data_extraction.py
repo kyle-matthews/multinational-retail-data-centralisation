@@ -18,4 +18,14 @@ class DataExtractor:
               payment_data_df = payment_data[0]
               return payment_data_df
         
+        def __init__(self):
+            self.header = {'x-api-key': 'yFBQbwXe9J3sd6zWVAMrK6lcxxr0q1lr2PT6DDMX'}
+
+        def list_number_of_stores(self, number_stores_endpoint):
+            response = requests.get(number_stores_endpoint, params=None, headers = self.header)
+            return response
+        
+        def retrieve_stores_data(self, retrieve_store_endpoint):
+             
+        
 
