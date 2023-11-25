@@ -48,6 +48,15 @@ class DatabaseConnector:
     
 
     def upload_to_db(self, df, table_name):
+        """
+        The function `upload_to_db` uploads a pandas DataFrame to a database table using the specified table
+        name.
+        
+        :param df: The parameter `df` is a pandas DataFrame that contains the data you want to upload to the
+        database
+        :param table_name: The `table_name` parameter is a string that specifies the name of the table in
+        the database where you want to upload the DataFrame (`df`)
+        """
 
         engine = self.init_db_engine('pgAdmin.yaml')
 
