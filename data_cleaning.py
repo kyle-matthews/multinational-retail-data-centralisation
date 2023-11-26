@@ -1,4 +1,5 @@
 import pandas as pd
+from dateutil.parser import parse
 
 
 class DataCleaning:
@@ -30,6 +31,6 @@ class DataCleaning:
         df = df.reset_index(drop=True)
         
         df['card_number'] = pd.to_numeric(df['card_number'], errors='coerce')
-        
+        df["date_payment_confirmed"] = df["date_payment_confirmed"].apply(lambda x: parse(x))
         df['expiry_date'] = pd.to_datetime(df['expiry_date'], errors='ignore', format='%m%y')
         return df
