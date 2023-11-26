@@ -49,15 +49,23 @@ class DataExtractor:
             want to send a GET request to in order to retrieve the number of stores
             :return: the response object from the GET request made to the `number_stores_endpoint`.
             """
-            store_number = requests.get(number_stores_endpoint, params=None, headers = self.header)
-            return store_number
+            num_stores = requests.get(number_stores_endpoint, params=None, headers = self.header)
+            num_stores = num_stores.text
+            num_stores = int((num_stores[-4:-1]))
+            return num_stores
         
-        def retrieve_stores_data(self, retrieve_store_endpoint):
-            store_data = requests.get(retrieve_store_endpoint, params=None, headers=self.header)
             
-            stores_data_list = []
-            for store_number in range(1, self.store_number) + 1:
-                store_endpoint = retrieve_store_endpoint.format(store_number=store_number)
-                store_data = self.retrieve_stores_data(store_endpoint)
-                stores_data_list.append(store_data)
-            return store_data
+        def retrieve_stores_data(self, num_stores: int):
+            all_stores_data = []
+            store_number = 0
+            while store_number <= num_stores: 
+                #print(store_number)
+                store_endpoint = f'https://aqj7u5id95.execute-api.eu-west-1.amazonaws.com/prod/store_details/{store_number}'
+                response = requests.get(store_endpoint, headers=self.header)
+                store_number +=1
+                #print(store_number)
+                
+                store_data = response.json()
+                all_stores_data.append(store_data)
+            store_data_df = pd.DataFrame([store for store in all_stores_data if isinstance(store, dict)])
+            return store_data_df

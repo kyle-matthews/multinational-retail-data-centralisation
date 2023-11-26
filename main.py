@@ -23,12 +23,16 @@ cleaner = DataCleaning()
 #creds = 'PgAdmin.yaml'
 #connector.upload_to_db(clean_payment_data, 'dim_card_details')
 
-#Connects to API to retrieve the total number of stores
-number_of_stores = extractor.list_number_of_stores('https://aqj7u5id95.execute-api.eu-west-1.amazonaws.com/prod/number_stores')
+api_key = 'yFBQbwXe9J3sd6zWVAMrK6lcxxr0q1lr2PT6DDMX'
+number_of_stores_endpoint = 'https://aqj7u5id95.execute-api.eu-west-1.amazonaws.com/prod/number_stores'
+retrieve_store_endpoint = 'https://aqj7u5id95.execute-api.eu-west-1.amazonaws.com/prod/store_details/{store_number}'
 
-#Connects to an API to retrieve data on stores
-stores_data = extractor.retrieve_stores_data('https://aqj7u5id95.execute-api.eu-west-1.amazonaws.com/prod/store_details/451')
+# Connects to API to retrieve the number of stores.
+num_stores = extractor.list_number_of_stores(number_of_stores_endpoint)
 
 
+#print("Value of num_stores:", num_stores)
 
-print(extractor.stores_data)
+# Connects to API to collect store information and passes it as a Dataframe.
+store_df = extractor.retrieve_stores_data(452)
+print(store_df)
