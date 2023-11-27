@@ -36,18 +36,19 @@ class DataCleaning:
     
     def clean_store_data(self, df):
         df['longitude'] = pd.to_numeric(df['longitude'], errors='coerce')
+        df['latitude'] = pd.to_numeric(df['latitude'], errors='coerce')
         df['opening_date'] = pd.to_datetime(df['opening_date'], errors='coerce', yearfirst=True, format='mixed')
         
         # Drop rows with missing values in key columns
         df = df.dropna(subset=['address', 'latitude', 'longitude'])
-
+        
         # Remove rows with incorrect data based on specific criteria (e.g., checking the length of strings)
         df = df[df['address'].str.len() > 5]
 
         # Check and remove duplicates
         df = df.drop_duplicates(subset=['address', 'latitude', 'longitude'], keep='first')
 
-        # Validate latitude and longitude ranges
+
         df = df[(df['latitude'] >= -90) & (df['latitude'] <= 90) & (df['longitude'] >= -180) & (df['longitude'] <= 180)]
 
         # Reset index after cleaning

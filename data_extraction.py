@@ -3,6 +3,7 @@ from database_utils import DatabaseConnector
 from sqlalchemy import create_engine
 import tabula
 import requests
+import boto3
 
 """The `DataExtractor` class provides methods for reading data from an RDS table and uploading data to
 a database table."""
@@ -57,7 +58,7 @@ class DataExtractor:
             
         def retrieve_stores_data(self, num_stores: int):
             all_stores_data = []
-            store_number = 0
+            store_number = 1
             while store_number <= num_stores: 
                 #print(store_number)
                 store_endpoint = f'https://aqj7u5id95.execute-api.eu-west-1.amazonaws.com/prod/store_details/{store_number}'

@@ -32,10 +32,11 @@ num_stores = extractor.list_number_of_stores(number_of_stores_endpoint)
 
 # Connects to API to collect store information and passes it as a Dataframe.
 store_df = extractor.retrieve_stores_data(452)
-print(store_df.head(5))
+#print(store_df.head(5))
 
 cleaned_store_data = cleaner.clean_store_data(store_df)
-print(cleaned_store_data)
+#print(cleaned_store_data)
 
-#creds = 'PgAdmin.yaml'
-#connector.upload_to_db(cleaned_store_data, 'dim_store_details')
+creds = 'PgAdmin.yaml'
+connector.upload_to_db(cleaned_store_data, 'dim_store_details')
+
