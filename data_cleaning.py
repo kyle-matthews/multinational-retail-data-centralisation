@@ -37,10 +37,12 @@ class DataCleaning:
     def clean_store_data(self, df):
         df['longitude'] = pd.to_numeric(df['longitude'], errors='coerce')
         df['latitude'] = pd.to_numeric(df['latitude'], errors='coerce')
+        df['staff_numbers'] = pd.to_numeric(df['staff_numbers'], errors='coerce')
         df['opening_date'] = pd.to_datetime(df['opening_date'], errors='coerce', yearfirst=True, format='mixed')
         
         # Drop rows with missing values in key columns
         df = df.dropna(subset=['address', 'latitude', 'longitude'])
+        df = df.drop(['lat'], axis=1)
         
         # Remove rows with incorrect data based on specific criteria (e.g., checking the length of strings)
         df = df[df['address'].str.len() > 5]
