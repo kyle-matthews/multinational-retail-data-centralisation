@@ -35,25 +35,29 @@ class DataCleaning:
         return df
     
     def clean_store_data(self, df):
+        """
+        The function `clean_store_data` takes a DataFrame as input and performs various cleaning operations
+        on it, including converting certain columns to numeric and datetime types, dropping rows with
+        missing values in specific columns, dropping a column, removing rows with addresses shorter than 5
+        characters, dropping duplicate rows based on specific columns, and resetting the index of the
+        DataFrame.
+        
+        :param df: The parameter `df` is a pandas DataFrame that contains store data
+        :return: the cleaned and filtered dataframe.
+        """
         df['longitude'] = pd.to_numeric(df['longitude'], errors='coerce')
         df['latitude'] = pd.to_numeric(df['latitude'], errors='coerce')
         df['staff_numbers'] = pd.to_numeric(df['staff_numbers'], errors='coerce')
         df['opening_date'] = pd.to_datetime(df['opening_date'], errors='coerce', yearfirst=True, format='mixed')
         
-        # Drop rows with missing values in key columns
         df = df.dropna(subset=['address', 'latitude', 'longitude'])
         df = df.drop(['lat'], axis=1)
-        
-        # Remove rows with incorrect data based on specific criteria (e.g., checking the length of strings)
         df = df[df['address'].str.len() > 5]
-
-        # Check and remove duplicates
         df = df.drop_duplicates(subset=['address', 'latitude', 'longitude'], keep='first')
-
-
         df = df[(df['latitude'] >= -90) & (df['latitude'] <= 90) & (df['longitude'] >= -180) & (df['longitude'] <= 180)]
-
-        # Reset index after cleaning
         df = df.reset_index(drop=True)
 
         return df
+    
+    def clean_product_weights(self, df):
+        

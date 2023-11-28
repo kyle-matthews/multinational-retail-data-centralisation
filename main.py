@@ -25,18 +25,21 @@ number_of_stores_endpoint = 'https://aqj7u5id95.execute-api.eu-west-1.amazonaws.
 retrieve_store_endpoint = 'https://aqj7u5id95.execute-api.eu-west-1.amazonaws.com/prod/store_details/{store_number}'
 
 # Connects to API to retrieve the number of stores.
-num_stores = extractor.list_number_of_stores(number_of_stores_endpoint)
+#num_stores = extractor.list_number_of_stores(number_of_stores_endpoint)
 
 
 #print("Value of num_stores:", num_stores)
 
 # Connects to API to collect store information and passes it as a Dataframe.
-store_df = extractor.retrieve_stores_data(452)
+#store_df = extractor.retrieve_stores_data(452)
 #print(store_df.head(5))
 
-cleaned_store_data = cleaner.clean_store_data(store_df)
+#cleaned_store_data = cleaner.clean_store_data(store_df)
 #print(cleaned_store_data)
 
-creds = 'PgAdmin.yaml'
-connector.upload_to_db(cleaned_store_data, 'dim_store_details')
 
+products_df = extractor.extract_from_s3('s3://data-handling-public/products.csv')
+print(products_df.head(5))
+
+creds = 'PgAdmin.yaml'
+connector.upload_to_db(products_df, 'clean_products_data')
