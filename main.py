@@ -39,7 +39,8 @@ retrieve_store_endpoint = 'https://aqj7u5id95.execute-api.eu-west-1.amazonaws.co
 
 
 products_df = extractor.extract_from_s3('s3://data-handling-public/products.csv')
-print(products_df.head(5))
+clean_products_df = cleaner.clean_product_weights(products_df)
+print(clean_products_df)
 
-creds = 'PgAdmin.yaml'
-connector.upload_to_db(products_df, 'clean_products_data')
+#creds = 'PgAdmin.yaml'
+#connector.upload_to_db(products_df, 'clean_products_data')
