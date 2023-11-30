@@ -62,17 +62,20 @@ class DataCleaning:
     
     def clean_product_weights(self, df):
         clean_df = df.copy()
-        df = df.dropna()
+        clean_df = clean_df.dropna()
 
         def convert_weight(value):
             return pd.to_numeric(re.sub(r'\D', '', value))
 
         for index, value in enumerate(df['weight']):
-            if 'kg' in value:
+            if 'x' in value:
+                value  = value.replace('x', '*')
+                clean_df[index, 'weight'] = eval(value)
+            elif 'kg' in value:
                 clean_df.at[index, 'weight'] = convert_weight(value)
             elif 'g' in value or 'ml' in value:
                 clean_df.at[index, 'weight'] = convert_weight(value) / 1000
             else:
                 clean_df.at[index,'weight'] = convert_weight(value)
-
+            
         return clean_df
