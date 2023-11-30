@@ -1,5 +1,6 @@
 import pandas as pd
 from dateutil.parser import parse
+import re
 
 
 class DataCleaning:
@@ -60,15 +61,18 @@ class DataCleaning:
         return df
     
     def clean_product_weights(self, df):
+        clean_df = df.copy()
+        df = df.dropna()
+
         def convert_weight(value):
-            return pd.to_numeric(value.replace('\D', ''))
+            return pd.to_numeric(re.sub(r'\D', '', value))
 
         for index, value in enumerate(df['weight']):
             if 'kg' in value:
-                df[index, 'weight'] = convert_weight(value)
-            elif 'g' in value:
-                df[index, 'weight'] = convert_weight(value) / 1000
+                clean_df.at[index, 'weight'] = convert_weight(value)
+            elif 'g' in value or 'ml' in value:
+                clean_df.at[index, 'weight'] = convert_weight(value) / 1000
             else:
-                df[index,'weight'] = convert_weight(value)
+                clean_df.at[index,'weight'] = convert_weight(value)
 
-        return df
+        return clean_df
