@@ -62,20 +62,28 @@ class DataCleaning:
     
     def clean_product_weights(self, df):
         clean_df = df.copy()
-        clean_df = clean_df.dropna()
+        clean_df = clean_df.dropna(subset=['weight'])
 
         def convert_weight(value):
-            return pd.to_numeric(re.sub(r'\D', '', value))
-
-        for index, value in enumerate(df['weight']):
-            if 'x' in value:
-                value  = value.replace('x', '*')
-                clean_df[index, 'weight'] = eval(value)
-            elif 'kg' in value:
-                clean_df.at[index, 'weight'] = convert_weight(value)
-            elif 'g' in value or 'ml' in value:
-                clean_df.at[index, 'weight'] = convert_weight(value) / 1000
+            if pd.notna(value):
+                return pd.to_numeric(re.sub(r'\D', '', str(value)))
             else:
-                clean_df.at[index,'weight'] = convert_weight(value)
-            
+                return value
+
+        for index, row in clean_df.iterrows():
+            value = row['weight']
+            if 'x' in value:
+                value = value.replace('x', '*')
+                try:
+                    clean_df.at[index, 'weight'] = eval(value)
+                except (SyntaxError, ZeroDivisionError):
+                    clean_df.at[index, 'weight'] = None
+            elif 'kg' in value:
+                clean_df.at[index, 'weight'] = convert_weight(value.replace('kg', ''))
+            elif 'g' in value:
+                clean_df.at[index, 'weight'] = convert_weight(value.replace('g', '')) / 1000
+            elif 'ml' in value:
+                clean_df.at[index, 'weight'] = convert_weight(value.replace('ml', '')) / 1000
+            else:
+                clean_df.at[index, 'weight'] = convert_weight(value)
         return clean_df
