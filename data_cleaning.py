@@ -12,6 +12,7 @@ class DataCleaning:
         'date_column' to datetime format, and converting the 'numeric_column' to numeric format.
         """
         df = df.dropna()
+        df = self.remove_nonsense(df)
         df = df.drop_duplicates(subset=['index'], keep='first')
         df = df.reset_index(drop=True)
         df['date_of_birth'] = pd.to_datetime(df['date_of_birth'], errors='coerce', yearfirst=True, format='mixed')
@@ -28,7 +29,7 @@ class DataCleaning:
         :param df: The parameter `df` is a pandas DataFrame that contains card data
         """
         df = df.dropna()
-        
+        df = self.remove_nonsense(df)
         df = df.reset_index(drop=True)
         
         df['card_number'] = pd.to_numeric(df['card_number'], errors='coerce')
@@ -62,20 +63,26 @@ class DataCleaning:
         return df
     
     def clean_product_weights(self, df):
+        """
+        The `clean_product_weights` function takes a DataFrame as input, removes nonsense values, drops rows
+        with missing weight values, cleans the weight column by removing units and special characters, and
+        returns the cleaned DataFrame.
+        
+        :param df: The `df` parameter is a pandas DataFrame that contains product data
+        :return: the cleaned dataframe, `clean_df`.
+        """
         clean_df = df.copy()
         self.remove_nonsense(clean_df)
         clean_df = clean_df.dropna(subset=['weight'])
         clean_df.loc[:, 'weight'] = clean_df.loc[:, 'weight'].str.strip('.')
         
-        
-        
-
         clean_df.loc[:, 'weight'] = clean_df.loc[:,'weight'].apply(lambda x: x.replace('g', ''))
         print('g replaced')
 
         clean_df.loc[:, 'weight'] = clean_df.loc[:,'weight'].apply(lambda x: x.replace('ml', ''))
         print('ml replaced')
         
+        #This method of cleaning the oz's might break something
         clean_df.loc[:, 'weight'] = clean_df.loc[:,'weight'].apply(lambda x: x.replace('oz', ''))
         print('ml replaced')
 
@@ -92,11 +99,27 @@ class DataCleaning:
     
 
     def convert_weight(self,value):
+        """
+        The function `convert_weight` converts a weight value to a numeric format by removing any non-digit
+        characters.
+        
+        :param value: The `value` parameter is the weight value that needs to be converted
+        :return: the numeric value of the input `value` after removing any non-digit characters. If the
+        input `value` is `NaN` (not a number), it will return `NaN` itself.
+        """
         if pd.notna(value):
             return pd.to_numeric(re.sub(r'\D', '', str(value)))
         else:
             return value
         
     def remove_nonsense(self, df):
+        """
+        The function removes any values in the dataframe that consist of 8 to 10 uppercase letters or
+        digits.
+        
+        :param df: The parameter `df` is a pandas DataFrame object
+        :return: the modified dataframe after removing the rows that match the specified regular expression
+        pattern.
+        """
         df.replace(r'^[A-Z0-9]{8,10}$', None, regex=True, inplace=True)
         return df
