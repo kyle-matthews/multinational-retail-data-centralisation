@@ -1,5 +1,5 @@
 import yaml
-from sqlalchemy import create_engine
+import sqlalchemy
 import psycopg2
 
 class DatabaseConnector:
@@ -29,22 +29,21 @@ class DatabaseConnector:
         USER = creds['USER']
         DATABASE = creds['DATABASE']
         PORT = creds['PORT']
-        self.engine = create_engine(f"{DATABASE_TYPE}+{DBAPI}://{USER}:{PASSWORD}@{HOST}:{PORT}/{DATABASE}")
+        self.engine = sqlalchemy.create_engine(f"{DATABASE_TYPE}+{DBAPI}://{USER}:{PASSWORD}@{HOST}:{PORT}/{DATABASE}")
         print('Database connected')
         return self.engine
 
-    
 
-    """def list_db_tables(self):
+    def list_db_tables(self):
 # The code block you provided is defining a method called `list_db_tables` in the `DatabaseConnector`
 # class. This method is responsible for connecting to the database, inspecting the tables in the
 # database, and returning a list of table names.
-        engine = self.init_db_engine()
+        engine = self.init_db_engine('db_creds.yaml')
         table_inspector = sqlalchemy.inspect(engine)
         tables = table_inspector.get_table_names()
 
         print(tables)
-        return tables"""
+        return tables
     
 
     def upload_to_db(self, df, table_name):

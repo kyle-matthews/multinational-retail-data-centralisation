@@ -123,3 +123,15 @@ class DataCleaning:
         """
         df.replace(r'^[A-Z0-9]{8,10}$', None, regex=True, inplace=True)
         return df
+    
+    def drop_columns(self, df, column_name):
+        df = df.drop(column_name, inplace=True, axis=1)
+
+    def clean_orders_data(self, df):
+        clean_df = df.copy()
+        self.remove_nonsense(clean_df)
+        self.drop_columns(clean_df, 'first_name')
+        self.drop_columns(clean_df, 'last_name')
+        self.drop_columns(clean_df, '1')
+        df = df.dropna(subset=['first_name', 'last_name', '1'])
+        return clean_df
