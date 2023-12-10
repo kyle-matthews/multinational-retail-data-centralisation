@@ -1,6 +1,7 @@
 import pandas as pd
 from dateutil.parser import parse
 import re
+import numpy as np
 
 
 class DataCleaning:
@@ -62,28 +63,40 @@ class DataCleaning:
     
     def clean_product_weights(self, df):
         clean_df = df.copy()
+        self.remove_nonsense(clean_df)
         clean_df = clean_df.dropna(subset=['weight'])
+        clean_df.loc[:, 'weight'] = clean_df.loc[:, 'weight'].str.strip('.')
+        
+        
+        
 
-        def convert_weight(value):
-            if pd.notna(value):
-                return pd.to_numeric(re.sub(r'\D', '', str(value)))
-            else:
-                return value
+        clean_df.loc[:, 'weight'] = clean_df.loc[:,'weight'].apply(lambda x: x.replace('g', ''))
+        print('g replaced')
 
-        for index, row in clean_df.iterrows():
-            value = row['weight']
-            if 'x' in value:
-                value = value.replace('x', '*')
-                try:
-                    clean_df.at[index, 'weight'] = eval(value)
-                except (SyntaxError, ZeroDivisionError):
-                    clean_df.at[index, 'weight'] = None
-            elif 'kg' in value:
-                clean_df.at[index, 'weight'] = convert_weight(value.replace('kg', ''))
-            elif 'g' in value:
-                clean_df.at[index, 'weight'] = convert_weight(value.replace('g', '')) / 1000
-            elif 'ml' in value:
-                clean_df.at[index, 'weight'] = convert_weight(value.replace('ml', '')) / 1000
-            else:
-                clean_df.at[index, 'weight'] = convert_weight(value)
+        clean_df.loc[:, 'weight'] = clean_df.loc[:,'weight'].apply(lambda x: x.replace('ml', ''))
+        print('ml replaced')
+        
+        clean_df.loc[:, 'weight'] = clean_df.loc[:,'weight'].apply(lambda x: x.replace('oz', ''))
+        print('ml replaced')
+
+        clean_df.loc[:, 'weight'] = clean_df.loc[:,'weight'].str.replace(r'^[0-9]+\sx\s+[0-9]+$', '', regex=True)
+        clean_df.replace('', np.nan, inplace=True)
+        print('x gone')
+
+        clean_df.loc[:, 'weight'] = clean_df.loc[:, 'weight'].astype(str).apply(lambda x: float(x) /1000 if 'k' not in x else x)
+
+        clean_df.loc[:,'weight'] = clean_df.loc[:,'weight'].astype('str').apply(lambda x: x.replace('k', ''))
+
+
         return clean_df
+    
+
+    def convert_weight(self,value):
+        if pd.notna(value):
+            return pd.to_numeric(re.sub(r'\D', '', str(value)))
+        else:
+            return value
+        
+    def remove_nonsense(self, df):
+        df.replace(r'^[A-Z0-9]{8,10}$', None, regex=True, inplace=True)
+        return df

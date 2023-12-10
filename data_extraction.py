@@ -76,4 +76,3 @@ class DataExtractor:
             s3.download_file('data-handling-public', 'products.csv', '/Users/kylematthews/Documents/AICore/multinational-retail-data-centralisation/multinational-retail-data-centralisation/products.csv')
             df = pd.read_csv('products.csv')
             return df
-             

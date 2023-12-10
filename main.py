@@ -43,4 +43,4 @@ clean_products_df = cleaner.clean_product_weights(products_df)
 print(clean_products_df)
 
 creds = 'PgAdmin.yaml'
-connector.upload_to_db(products_df, 'clean_products_data')
+connector.upload_to_db(clean_products_df, 'clean_products_data')
