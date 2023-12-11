@@ -50,16 +50,30 @@ clean_products_df = cleaner.clean_product_weights(products_df)"""
 connector.upload_to_db(clean_products_df, 'clean_products_data')
 print('uploaded clean_products_data')"""
 
+"""# The code snippet is performing the following tasks:
+#Initiates a database engine, lists the tables in the database and prints out the names of the tables. 
 connector.init_db_engine(creds)
 table_list = connector.list_db_tables()
 print(table_list)
-
+#Reads the 'orders_table' table from the remote database and returns the first 5 columns in table. 
 orders_df = extractor.read_rds_table(connector, 'orders_table')
 print(orders_df.head(5))
-
+#Cleans the data using the clean_orders_data method in the 'cleaner' class. 
 clean_orders_df = cleaner.clean_orders_data(orders_df)
 print(clean_orders_df.head(5))
-
+#Updates creds variable to access postgres database and uploads cleaned data to central database. 
 creds = 'PgAdmin.yaml'
 connector.upload_to_db(clean_orders_df, 'orders_table')
-print('uploaded orders_table')
+print('uploaded orders_table')"""
+
+dim_date_times = extractor.extract_json_from_s3()
+clean_date_times = cleaner.clean_date_times(dim_date_times)
+print(clean_date_times.head(5))
+
+#Updates creds variable to access postgres database and uploads cleaned data to central database. 
+creds = 'PgAdmin.yaml'
+connector.upload_to_db(dim_date_times, 'dim_date_times')
+
+
+
+

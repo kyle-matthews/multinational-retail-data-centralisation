@@ -72,8 +72,14 @@ class DataExtractor:
             store_data_df = pd.DataFrame([store for store in all_stores_data if isinstance(store, dict)])
             return store_data_df
         
-        def extract_from_s3(self):
+        def extract_csv_from_s3(self):
             s3 = boto3.client('s3')
             s3.download_file('data-handling-public', 'products.csv', '/Users/kylematthews/Documents/AICore/multinational-retail-data-centralisation/multinational-retail-data-centralisation/products.csv')
             df = pd.read_csv('products.csv')
             return df
+        
+        def extract_json_from_s3(self):
+             s3 = boto3.client('s3')
+             s3.download_file('data-handling-public', 'date_details.json', '/Users/kylematthews/Documents/AICore/multinational-retail-data-centralisation/multinational-retail-data-centralisation/date_details.json')
+             df = pd.read_json('date_details.json')
+             return df

@@ -135,3 +135,13 @@ class DataCleaning:
         self.drop_columns(clean_df, '1')
         df = df.dropna(subset=['first_name', 'last_name', '1'])
         return clean_df
+    
+    def clean_date_times(self, df):
+        clean_df = df.copy()
+        self.remove_nonsense(clean_df)
+        clean_df = clean_df.dropna()
+        clean_df['month'] = pd.to_numeric(clean_df['month'], errors='coerce')
+        clean_df['year'] = pd.to_numeric(clean_df['year'], errors='coerce')
+        clean_df['day'] = pd.to_numeric(clean_df['day'], errors='coerce')
+        clean_df['timestamp'] = pd.to_datetime(clean_df['timestamp'], format='%H:%M:%S', errors='coerce')
+        return df
