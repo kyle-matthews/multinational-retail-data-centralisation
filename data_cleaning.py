@@ -8,18 +8,35 @@ class DataCleaning:
 
     def clean_user_data(self, df):
         """
-        The function `clean_user_data` cleans the user data by dropping missing values, converting the
-        'date_column' to datetime format, and converting the 'numeric_column' to numeric format.
+        The function `clean_user_data` takes a DataFrame as input, removes nonsense values, cleans the phone
+        number and join date columns, converts the date of birth and join date columns to datetime format,
+        drops rows with missing values, and replaces 'GGB' with 'GB' in the country code column.
+        
+        :param df: The parameter `df` is a pandas DataFrame that contains user data
         """
-        df = df.dropna()
+        
+        # Remove nonsense values
         df = self.remove_nonsense(df)
-        df = df.drop_duplicates(subset=['index'], keep='first')
+        
+        # Reset index
         df = df.reset_index(drop=True)
-        df['date_of_birth'] = pd.to_datetime(df['date_of_birth'], errors='coerce', yearfirst=True, format='mixed')
-        df['join_date'] = pd.to_datetime(df['join_date'], errors='coerce', yearfirst=True, format='mixed')
+        
+        # Clean phone number column
         df['phone_number'] = df['phone_number'].str.replace(r'^(?:\(\+\d+\))|\D', '', regex=True)
-
+        df['join_date'] = df['join_date'].str.replace(r'^(?:\(\+\d+\))|\D', '', regex=True)
+        
+        # Convert date_of_birth and join_date to datetime format
+        df['date_of_birth'] = pd.to_datetime(df['date_of_birth'].astype(str), format='mixed', errors='coerce')
+        df['join_date'] = pd.to_datetime(df['join_date'].astype(str), format='mixed', errors='coerce')
+        
+        # Drop rows with missing values in specified columns
+        df.dropna(subset=['date_of_birth', 'country_code'], inplace=True)
+        
+        # Replace 'GGB' with 'GB' in country_code column
+        df['country_code'] = df['country_code'].apply(lambda x: x.replace('GGB', 'GB'))
+        
         return df
+
     
     def clean_card_data(self, df):
         """
@@ -34,7 +51,6 @@ class DataCleaning:
         
         df['card_number'] = pd.to_numeric(df['card_number'], errors='coerce')
         df["date_payment_confirmed"] = df["date_payment_confirmed"].apply(lambda x: parse(x))
-        df['expiry_date'] = pd.to_datetime(df['expiry_date'], errors='ignore', format='%m%y')
         return df
     
     def clean_store_data(self, df):
@@ -48,16 +64,14 @@ class DataCleaning:
         :param df: The parameter `df` is a pandas DataFrame that contains store data
         :return: the cleaned and filtered dataframe.
         """
-        df['longitude'] = pd.to_numeric(df['longitude'], errors='coerce')
-        df['latitude'] = pd.to_numeric(df['latitude'], errors='coerce')
-        df['staff_numbers'] = pd.to_numeric(df['staff_numbers'], errors='coerce')
-        df['opening_date'] = pd.to_datetime(df['opening_date'], errors='coerce', yearfirst=True, format='mixed')
-        
+
+        df = self.remove_nonsense(df)
         df = df.dropna(subset=['address', 'latitude', 'longitude'])
+        df.loc['longitude'] = pd.to_numeric(df.loc['longitude'], errors='coerce')
+        df.loc['latitude'] = pd.to_numeric(df.loc['latitude'], errors='coerce')
         df = df.drop(['lat'], axis=1)
         df = df[df['address'].str.len() > 5]
         df = df.drop_duplicates(subset=['address', 'latitude', 'longitude'], keep='first')
-        df = df[(df['latitude'] >= -90) & (df['latitude'] <= 90) & (df['longitude'] >= -180) & (df['longitude'] <= 180)]
         df = df.reset_index(drop=True)
 
         return df
@@ -72,7 +86,7 @@ class DataCleaning:
         :return: the cleaned dataframe, `clean_df`.
         """
         clean_df = df.copy()
-        self.remove_nonsense(clean_df)
+        clean_df = self.remove_nonsense(clean_df)
         clean_df = clean_df.dropna(subset=['weight'])
         clean_df.loc[:, 'weight'] = clean_df.loc[:, 'weight'].str.strip('.')
         
@@ -124,21 +138,50 @@ class DataCleaning:
         df.replace(r'^[A-Z0-9]{8,10}$', None, regex=True, inplace=True)
         return df
     
+        """
+        The function `drop_columns` is used to drop a specified column from a DataFrame in Python.
+        
+        :param df: The dataframe on which you want to drop columns
+        :param column_name: The column_name parameter is the name of the column that you want to drop from
+        the DataFrame
+        """
     def drop_columns(self, df, column_name):
-        df = df.drop(column_name, inplace=True, axis=1)
+        df = df.drop(column_name, inplace=False, axis=1)
+        return df
 
     def clean_orders_data(self, df):
+        """
+        The function `clean_orders_data` takes a DataFrame as input, creates a copy of it, removes nonsense
+        values, drops specific columns, drops rows with missing values in certain columns, and returns the
+        cleaned DataFrame.
+        
+        :param df: The parameter `df` is a pandas DataFrame that contains the orders data
+        :return: the cleaned dataframe, `clean_df`.
+        """
+        # Create a copy of the DataFrame
         clean_df = df.copy()
-        self.remove_nonsense(clean_df)
-        self.drop_columns(clean_df, 'first_name')
-        self.drop_columns(clean_df, 'last_name')
-        self.drop_columns(clean_df, '1')
-        df = df.dropna(subset=['first_name', 'last_name', '1'])
+        # Remove nonsense values
+        clean_df = self.remove_nonsense(clean_df)
+        # Drop specific columns
+        clean_df = self.drop_columns(clean_df, 'first_name')
+        clean_df = self.drop_columns(clean_df, 'last_name')
+        clean_df = self.drop_columns(clean_df, '1')
+        # Drop rows with missing values in specified columns
+        #clean_df = clean_df.dropna(subset=['first_name', 'last_name', '1'])
+        
         return clean_df
     
     def clean_date_times(self, df):
+        """
+        The function `clean_date_times` takes a DataFrame as input, removes nonsense values, drops any rows
+        with missing values, converts the 'month', 'year', 'day', and 'timestamp' columns to their
+        appropriate data types, and returns the cleaned DataFrame.
+        
+        :param df: The parameter `df` is a pandas DataFrame that contains date and time information
+        :return: the original dataframe `df`, not the cleaned dataframe `clean_df`.
+        """
         clean_df = df.copy()
-        self.remove_nonsense(clean_df)
+        clean_df = self.remove_nonsense(clean_df)
         clean_df = clean_df.dropna()
         clean_df['month'] = pd.to_numeric(clean_df['month'], errors='coerce')
         clean_df['year'] = pd.to_numeric(clean_df['year'], errors='coerce')
