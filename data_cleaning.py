@@ -88,9 +88,11 @@ class DataCleaning:
         :return: the cleaned dataframe, `clean_df`.
         """
         clean_df = df.copy()
+        clean_df.columns = clean_df.columns.str.lower()
         clean_df = self.remove_nonsense(clean_df)
         clean_df = clean_df.dropna(subset=['weight'])
         clean_df.loc[:, 'weight'] = clean_df.loc[:, 'weight'].str.strip('.')
+        clean_df.loc[:, 'date_added'] = pd.to_datetime(clean_df.loc[:, 'date_added'].astype(str), format='mixed', errors='coerce')
         
         clean_df.loc[:, 'weight'] = clean_df.loc[:,'weight'].apply(lambda x: x.replace('g', ''))
         print('g replaced')
@@ -103,7 +105,7 @@ class DataCleaning:
         print('ml replaced')
 
         clean_df.loc[:, 'weight'] = clean_df.loc[:,'weight'].str.replace(r'^[0-9]+\sx\s+[0-9]+$', '', regex=True)
-        clean_df.replace('', np.nan, inplace=True)
+        clean_df.replace('', 0, inplace=True)
         print('x gone')
 
         clean_df.loc[:, 'weight'] = clean_df.loc[:, 'weight'].astype(str).apply(lambda x: float(x) /1000 if 'k' not in x else x)
