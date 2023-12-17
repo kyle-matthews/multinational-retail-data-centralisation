@@ -176,19 +176,12 @@ class DataCleaning:
         return clean_df
     
     def clean_date_times(self, df):
-        """
-        The function `clean_date_times` takes a DataFrame as input, removes nonsense values, drops any rows
-        with missing values, converts the 'month', 'year', 'day', and 'timestamp' columns to their
-        appropriate data types, and returns the cleaned DataFrame.
         
-        :param df: The parameter `df` is a pandas DataFrame that contains date and time information
-        :return: the original dataframe `df`, not the cleaned dataframe `clean_df`.
-        """
-        clean_df = df.copy()
-        clean_df = self.remove_nonsense(clean_df)
-        clean_df = clean_df.dropna()
-        clean_df['month'] = pd.to_numeric(clean_df['month'], errors='coerce')
-        clean_df['year'] = pd.to_numeric(clean_df['year'], errors='coerce')
-        clean_df['day'] = pd.to_numeric(clean_df['day'], errors='coerce')
-        clean_df['timestamp'] = pd.to_datetime(clean_df['timestamp'], format='%H:%M:%S', errors='coerce')
+# The code is performing data cleaning operations on a DataFrame.
+        df = self.remove_nonsense(df)
+        df['month'] = pd.to_numeric(df['month'], errors='coerce')
+        df['year'] = pd.to_numeric(df['year'], errors='coerce')
+        df['day'] = pd.to_numeric(df['day'], errors='coerce')
+        df = df.dropna(axis=0, inplace=True)
+        df = self.drop_columns(df, 'timestamp')
         return df

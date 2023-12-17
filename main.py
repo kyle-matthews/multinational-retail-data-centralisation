@@ -70,7 +70,7 @@ print('uploaded orders_table')
 
 dim_date_times = extractor.extract_json_from_s3()
 clean_date_times = cleaner.clean_date_times(dim_date_times)
-print(clean_date_times.head(5))
+
 
 #Updates creds variable to access postgres database and uploads cleaned data to central database. 
 creds = 'PgAdmin.yaml'

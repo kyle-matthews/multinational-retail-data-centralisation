@@ -51,11 +51,7 @@ ALTER TABLE dim_store_details
 
 --Alterations to the dim_products table. 
 UPDATE dim_products
-    SET product_price = REPLACE(
-        product_price,
-        '£',
-        ''
-        )::FLOAT;
+    SET product_price = REPLACE(product_price,'£','')::FLOAT;
 ALTER TABLE dim_products
     ADD COLUMN weight_class VARCHAR(50);
 
@@ -77,12 +73,12 @@ ALTER TABLE dim_products
     ALTER COLUMN weight_class TYPE VARCHAR(255);
 
 UPDATE dim_products
-    SET still_available = CASE
-    WHEN still_available = 'Removed' THEN 'FALSE'
-    WHEN still_available = 'Still_available' THEN 'TRUE'
-    
-END;
+    SET still_available = REPLACE(still_available,'Still_avaliable','True');
+UPDATE dim_products
+    SET still_available = REPLACE(still_available,'Removed','False');
 
+ALTER TABLE dim_products
+    ALTER COLUMN still_available TYPE BOOLEAN USING (still_available::BOOLEAN);
 
 
 UPDATE dim_products
@@ -94,3 +90,22 @@ UPDATE dim_products
         END;
 
 
+
+
+ALTER TABLE dim_date_times
+    ALTER COLUMN month TYPE VARCHAR(100);
+ALTER TABLE dim_date_times
+    ALTER COLUMN year TYPE VARCHAR(100);
+ALTER TABLE dim_date_times
+    ALTER COLUMN day TYPE VARCHAR (100);
+ALTER TABLE dim_date_times
+    ALTER COLUMN time_period TYPE VARCHAR(100);
+ALTER TABLE dim_date_times
+    ALTER COLUMN date_uuid TYPE UUID USING (uuid_generate_v4());
+
+ALTER TABLE dim_card_details
+    ALTER COLUMN card_number TYPE VARCHAR(19);
+ALTER TABLE dim_card_details
+    ALTER COLUMN expiry_date TYPE VARCHAR(5);
+ALTER TABLE dim_card_details
+    ALTER COLUMN date_payment_confirmed TYPE DATE;
