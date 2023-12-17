@@ -75,12 +75,14 @@ ALTER TABLE dim_products
     ALTER COLUMN uuid TYPE UUID USING (uuid_generate_v4());
 ALTER TABLE dim_products
     ALTER COLUMN weight_class TYPE VARCHAR(255);
-ALTER TABLE dim_products
-    ALTER COLUMN still_available TYPE BOOLEAN USING 
-        CASE
-            WHEN (still_available) = 'Still_available' THEN TRUE
-            WHEN (still_available = 'removed') THEN FALSE
-        END;
+
+UPDATE dim_products
+    SET still_available = CASE
+    WHEN still_available = 'Removed' THEN 'FALSE'
+    WHEN still_available = 'Still_available' THEN 'TRUE'
+    
+END;
+
 
 
 UPDATE dim_products

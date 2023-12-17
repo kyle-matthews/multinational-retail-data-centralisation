@@ -76,7 +76,3 @@ print(clean_date_times.head(5))
 creds = 'PgAdmin.yaml'
 connector.upload_to_db(dim_date_times, 'dim_date_times')
 print('Successfully uploaded dim_date_times')
-
-
-
-
