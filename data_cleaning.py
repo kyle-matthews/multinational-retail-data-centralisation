@@ -67,8 +67,10 @@ class DataCleaning:
 
         df = self.remove_nonsense(df)
         df = df.dropna(subset=['address', 'latitude', 'longitude'])
-        df.loc['longitude'] = pd.to_numeric(df.loc['longitude'], errors='coerce')
-        df.loc['latitude'] = pd.to_numeric(df.loc['latitude'], errors='coerce')
+        df.loc[:, 'longitude'] = pd.to_numeric(df.loc[:, 'longitude'], errors='coerce')
+        df.loc[:, 'latitude'] = pd.to_numeric(df.loc[:,'latitude'], errors='coerce')
+        df.loc[:, 'staff_numbers'] = df.loc[:,'staff_numbers'].str.replace(r'^(?:\(\+\d+\))|\D', '', regex=True)
+        df.loc[:, 'opening_date'] = pd.to_datetime(df.loc[:, 'opening_date'].astype(str), format='mixed', errors='coerce')
         df = df.drop(['lat'], axis=1)
         df = df[df['address'].str.len() > 5]
         df = df.drop_duplicates(subset=['address', 'latitude', 'longitude'], keep='first')

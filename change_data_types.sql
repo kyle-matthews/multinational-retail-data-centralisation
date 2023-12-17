@@ -51,7 +51,7 @@ ALTER TABLE dim_store_details
     ALTER COLUMN store_code TYPE VARCHAR(12);
 
 ALTER TABLE dim_store_details
-    ALTER COLUMN staff_numbers TYPE SMALLINT;
+    ALTER COLUMN staff_numbers TYPE integer USING (trim(staff_numbers)::integer);
 
 ALTER TABLE dim_store_details
     ALTER COLUMN opening_date TYPE DATE;
