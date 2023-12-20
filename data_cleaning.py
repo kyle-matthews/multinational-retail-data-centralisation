@@ -17,27 +17,26 @@ class DataCleaning:
         
         # Remove nonsense values
         df = self.remove_nonsense(df)
-        
+        df = df.dropna()
         # Reset index
-        df = df.reset_index(drop=True)
-        
+        #df = df.reset_index(drop=True)
+        df = df[df.first_name != 'NULL']
         # Clean phone number column
         df['phone_number'] = df['phone_number'].str.replace(r'^(?:\(\+\d+\))|\D', '', regex=True)
-        df['join_date'] = df['join_date'].str.replace(r'^(?:\(\+\d+\))|\D', '', regex=True)
+        #df['join_date'] = df['join_date'].str.replace(r'^(?:\(\+\d+\))|\D', '', regex=True)
         
         # Convert date_of_birth and join_date to datetime format
-        df['date_of_birth'] = pd.to_datetime(df['date_of_birth'].astype(str), format='mixed', errors='coerce')
-        df['join_date'] = pd.to_datetime(df['join_date'].astype(str), format='mixed', errors='coerce')
+        df['date_of_birth'] = df['date_of_birth'].apply(pd.to_datetime, errors='coerce')
+        df['join_date'] = df['join_date'].apply(pd.to_datetime, errors='coerce')
         
-        # Drop rows with missing values in specified columns
-        df.dropna(subset=['date_of_birth', 'country_code'], inplace=True)
+        # Drop rows with missing values in specified columns - Removed due to inconsistencies between foreign key user_uuid
+        #df.dropna(subset=['date_of_birth', 'country_code'], inplace=True)
         
         # Replace 'GGB' with 'GB' in country_code column
-        df['country_code'] = df['country_code'].apply(lambda x: x.replace('GGB', 'GB'))
-        
-        return df
+        df['country_code'] = df['country_code'].astype(str).apply(lambda x: x.replace('GGB', 'GB'))
 
-    
+        return df
+  
     def clean_card_data(self, df):
         """
         The function `clean_card_data` removes rows with missing values in the 'card_number' and
@@ -52,7 +51,7 @@ class DataCleaning:
         df['card_number'] = pd.to_numeric(df['card_number'], errors='coerce')
         df["date_payment_confirmed"] = df["date_payment_confirmed"].apply(lambda x: parse(x))
         return df
-    
+
     def clean_store_data(self, df):
         """
         The function `clean_store_data` takes a DataFrame as input and performs various cleaning operations
@@ -77,7 +76,7 @@ class DataCleaning:
         df = df.reset_index(drop=True)
 
         return df
-    
+
     def clean_product_weights(self, df):
         """
         The `clean_product_weights` function takes a DataFrame as input, removes nonsense values, drops rows
@@ -114,7 +113,6 @@ class DataCleaning:
 
 
         return clean_df
-    
 
     def convert_weight(self,value):
         """
@@ -129,8 +127,10 @@ class DataCleaning:
             return pd.to_numeric(re.sub(r'\D', '', str(value)))
         else:
             return value
-        
+
     def remove_nonsense(self, df):
+
+
         """
         The function removes any values in the dataframe that consist of 8 to 10 uppercase letters or
         digits.
@@ -149,8 +149,9 @@ class DataCleaning:
         :param column_name: The column_name parameter is the name of the column that you want to drop from
         the DataFrame
         """
+
     def drop_columns(self, df, column_name):
-        df = df.drop(column_name, inplace=False, axis=1)
+        df.drop(column_name, axis=1, inplace=True)
         return df
 
     def clean_orders_data(self, df):
@@ -174,10 +175,8 @@ class DataCleaning:
         #clean_df = clean_df.dropna(subset=['first_name', 'last_name', '1'])
         
         return clean_df
-    
+
     def clean_date_times(self, df):
-        
-# The code is performing data cleaning operations on a DataFrame.
         df = self.remove_nonsense(df)
         df['month'] = pd.to_numeric(df['month'], errors='coerce')
         df['year'] = pd.to_numeric(df['year'], errors='coerce')
