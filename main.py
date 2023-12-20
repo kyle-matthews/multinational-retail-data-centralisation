@@ -6,7 +6,7 @@ connector = DatabaseConnector()
 extractor = DataExtractor()
 cleaner = DataCleaning()
 
-#Extracts, cleans and uploads user data into 'dim_users'. 
+"""#Extracts, cleans and uploads user data into 'dim_users'. 
 creds = 'db_creds.yaml'
 legacy_users_df = extractor.read_rds_table(connector, 'legacy_users')
 legacy_users_df.to_csv('extracted_users_data.csv')
@@ -68,15 +68,15 @@ clean_orders_df.to_csv('clean_orders.csv')
 #Updates creds variable to access postgres database and uploads cleaned data to central database. 
 creds = 'PgAdmin.yaml'
 connector.upload_to_db(clean_orders_df, 'orders_table')
-print('uploaded orders_table')
+print('uploaded orders_table')"""
 
 dim_date_times = extractor.extract_json_from_s3()
 dim_date_times.to_csv('extracted_date_times.csv')
 clean_date_times = cleaner.clean_date_times(dim_date_times)
-clean_date_times.to_csv('clean_date.csv')
+#clean_date_times.to_csv('clean_date.csv')
 
 
 #Updates creds variable to access postgres database and uploads cleaned data to central database. 
-#creds = 'PgAdmin.yaml'
-connector.upload_to_db(dim_date_times, 'dim_date_times')
+creds = 'PgAdmin.yaml'
+connector.upload_to_db(clean_date_times, 'dim_date_times')
 print('Successfully uploaded dim_date_times')

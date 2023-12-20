@@ -150,9 +150,9 @@ class DataCleaning:
         the DataFrame
         """
 
-    def drop_columns(self, df, column_name):
+        """def drop_columns(self, df, column_name):
         df.drop(column_name, axis=1, inplace=True)
-        return df
+        return df"""
 
     def clean_orders_data(self, df):
         """
@@ -165,12 +165,11 @@ class DataCleaning:
         """
         # Create a copy of the DataFrame
         clean_df = df.copy()
+        # Drop specific columns
+        df = df.drop(['level_0', '1', 'first_name', 'last_name'], axis=1)
         # Remove nonsense values
         clean_df = self.remove_nonsense(clean_df)
-        # Drop specific columns
-        clean_df = self.drop_columns(clean_df, 'first_name')
-        clean_df = self.drop_columns(clean_df, 'last_name')
-        clean_df = self.drop_columns(clean_df, '1')
+
         # Drop rows with missing values in specified columns
         #clean_df = clean_df.dropna(subset=['first_name', 'last_name', '1'])
         
@@ -178,9 +177,14 @@ class DataCleaning:
 
     def clean_date_times(self, df):
         df = self.remove_nonsense(df)
+        print('nonsense removed')
         df['month'] = pd.to_numeric(df['month'], errors='coerce')
+        print('month numericed')
         df['year'] = pd.to_numeric(df['year'], errors='coerce')
+        print('year numericed')
         df['day'] = pd.to_numeric(df['day'], errors='coerce')
+        print('day numericed')
         df = df.dropna(axis=0, inplace=True)
-        df = self.drop_columns(df, 'timestamp')
+        print('df dropnad')
+        
         return df
