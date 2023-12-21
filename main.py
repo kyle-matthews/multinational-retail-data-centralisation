@@ -6,7 +6,7 @@ connector = DatabaseConnector()
 extractor = DataExtractor()
 cleaner = DataCleaning()
 
-"""#Extracts, cleans and uploads user data into 'dim_users'. 
+#Extracts, cleans and uploads user data into 'dim_users'. 
 creds = 'db_creds.yaml'
 legacy_users_df = extractor.read_rds_table(connector, 'legacy_users')
 legacy_users_df.to_csv('extracted_users_data.csv')
@@ -14,7 +14,7 @@ clean_df = cleaner.clean_user_data(legacy_users_df)
 clean_df.to_csv('clean_users_data.csv')
 connector.upload_to_db(clean_df, 'dim_users')
 print('Uploaded dim_users')
-
+"""
 #Extracts, cleans and uploads payment data into 'dim_card_details'.
 payment_data_df = extractor.retrieve_pdf_data('https://data-handling-public.s3.eu-west-1.amazonaws.com/card_details.pdf')
 #print(payment_data_df)
@@ -51,10 +51,11 @@ clean_products_df = cleaner.clean_product_weights(products_df)
 
 creds = 'PgAdmin.yaml'
 connector.upload_to_db(clean_products_df, 'dim_products')
-print('uploaded dim_products')
+print('uploaded dim_products')"""
 
 # The following script performs the following tasks:
 #Initiates a database engine, lists the tables in the database and prints out the names of the tables. 
+creds = 'PgAdmin.yaml'
 connector.init_db_engine(creds)
 table_list = connector.list_db_tables()
 print(table_list)
@@ -68,12 +69,16 @@ clean_orders_df.to_csv('clean_orders.csv')
 #Updates creds variable to access postgres database and uploads cleaned data to central database. 
 creds = 'PgAdmin.yaml'
 connector.upload_to_db(clean_orders_df, 'orders_table')
-print('uploaded orders_table')"""
+print('uploaded orders_table')
 
 dim_date_times = extractor.extract_json_from_s3()
+print('extracted')
 dim_date_times.to_csv('extracted_date_times.csv')
+print("csv'd")
 clean_date_times = cleaner.clean_date_times(dim_date_times)
-#clean_date_times.to_csv('clean_date.csv')
+print('cleaned')
+clean_date_times.to_csv('clean_date.csv')
+print("clean_csv'd")
 
 
 #Updates creds variable to access postgres database and uploads cleaned data to central database. 

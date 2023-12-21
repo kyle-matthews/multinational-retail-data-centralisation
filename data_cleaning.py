@@ -14,26 +14,33 @@ class DataCleaning:
         
         :param df: The parameter `df` is a pandas DataFrame that contains user data
         """
-        
+        #Aiming for 15284 rows
         # Remove nonsense values
+        print('OG df' + str(len(df)))
         df = self.remove_nonsense(df)
-        df = df.dropna()
+        print('removed nonsense ' + str(len(df)))
         # Reset index
         #df = df.reset_index(drop=True)
-        df = df[df.first_name != 'NULL']
+        #df = df[df.first_name != 'NULL']
         # Clean phone number column
-        df['phone_number'] = df['phone_number'].str.replace(r'^(?:\(\+\d+\))|\D', '', regex=True)
+        df.loc[:, 'phone_number'] = df.loc[:,'phone_number'].str.replace(r'^(?:\(\+\d+\))|\D', '', regex=True)
+        print('replacing non digit in phone number ' + str(len(df)))
         #df['join_date'] = df['join_date'].str.replace(r'^(?:\(\+\d+\))|\D', '', regex=True)
         
         # Convert date_of_birth and join_date to datetime format
-        df['date_of_birth'] = df['date_of_birth'].apply(pd.to_datetime, errors='coerce')
-        df['join_date'] = df['join_date'].apply(pd.to_datetime, errors='coerce')
-        
+        df.loc[:, 'date_of_birth'] = df.loc[:, 'date_of_birth'].apply(pd.to_datetime, errors='ignore')
+        print('DOB datetime ' + str(len(df)))
+        df.loc[:, 'join_date'] = df.loc[:, 'join_date'].apply(pd.to_datetime, errors='ignore')
+        print('Join date Datetime ' + str(len(df)))
         # Drop rows with missing values in specified columns - Removed due to inconsistencies between foreign key user_uuid
         #df.dropna(subset=['date_of_birth', 'country_code'], inplace=True)
         
         # Replace 'GGB' with 'GB' in country_code column
-        df['country_code'] = df['country_code'].astype(str).apply(lambda x: x.replace('GGB', 'GB'))
+        df.loc[:, 'country_code'] = df.loc[:, 'country_code'].astype(str).apply(lambda x: x.replace('GGB', 'GB'))
+        print('Edit GGB to GB ' + str(len(df)))
+
+        df = df.dropna(subset=['user_uuid'])
+        print('dropna ' + str(len(df)))
 
         return df
   
@@ -164,16 +171,15 @@ class DataCleaning:
         :return: the cleaned dataframe, `clean_df`.
         """
         # Create a copy of the DataFrame
-        clean_df = df.copy()
         # Drop specific columns
-        df = df.drop(['level_0', '1', 'first_name', 'last_name'], axis=1)
+        df = df.drop(['level_0', '1', 'first_name', 'last_name'], axis = 1)
         # Remove nonsense values
-        clean_df = self.remove_nonsense(clean_df)
+        df = self.remove_nonsense(df)
 
         # Drop rows with missing values in specified columns
         #clean_df = clean_df.dropna(subset=['first_name', 'last_name', '1'])
         
-        return clean_df
+        return df
 
     def clean_date_times(self, df):
         df = self.remove_nonsense(df)
@@ -184,7 +190,7 @@ class DataCleaning:
         print('year numericed')
         df['day'] = pd.to_numeric(df['day'], errors='coerce')
         print('day numericed')
-        df = df.dropna(axis=0, inplace=True)
+        df = df.dropna()
         print('df dropnad')
         
         return df
