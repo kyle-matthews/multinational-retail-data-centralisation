@@ -14,7 +14,7 @@ clean_df = cleaner.clean_user_data(legacy_users_df)
 clean_df.to_csv('clean_users_data.csv')
 connector.upload_to_db(clean_df, 'dim_users')
 print('Uploaded dim_users')
-"""
+
 #Extracts, cleans and uploads payment data into 'dim_card_details'.
 payment_data_df = extractor.retrieve_pdf_data('https://data-handling-public.s3.eu-west-1.amazonaws.com/card_details.pdf')
 #print(payment_data_df)
@@ -51,7 +51,7 @@ clean_products_df = cleaner.clean_product_weights(products_df)
 
 creds = 'PgAdmin.yaml'
 connector.upload_to_db(clean_products_df, 'dim_products')
-print('uploaded dim_products')"""
+print('uploaded dim_products')
 
 # The following script performs the following tasks:
 #Initiates a database engine, lists the tables in the database and prints out the names of the tables. 

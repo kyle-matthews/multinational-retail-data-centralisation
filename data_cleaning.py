@@ -21,7 +21,7 @@ class DataCleaning:
         print('removed nonsense ' + str(len(df)))
         # Reset index
         #df = df.reset_index(drop=True)
-        #df = df[df.first_name != 'NULL']
+        df = df[df.first_name != 'NULL']
         # Clean phone number column
         df.loc[:, 'phone_number'] = df.loc[:,'phone_number'].str.replace(r'^(?:\(\+\d+\))|\D', '', regex=True)
         print('replacing non digit in phone number ' + str(len(df)))

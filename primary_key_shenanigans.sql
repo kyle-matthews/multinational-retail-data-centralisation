@@ -11,11 +11,9 @@ ALTER TABLE dim_card_details
     ADD PRIMARY KEY(card_number);
 
 -- Adds unique constraint to user_uuid before creating foreign key.
-/*ALTER TABLE orders_table
-    ADD CONSTRAINT user_uuid UNIQUE (user_uuid);*/
+ALTER TABLE orders_table
+    ADD CONSTRAINT user_uuid UNIQUE (user_uuid);
 
 --Foreign Key assignment for 'order_details'.
-ALTER TABLE dim_users 
-ADD CONSTRAINT ID
-FOREIGN KEY (user_uuid) 
-REFERENCES orders_table (user_uuid);
+ALTER TABLE dim_users
+ADD CONSTRAINT pk_dim_users PRIMARY KEY (user_uuid);
