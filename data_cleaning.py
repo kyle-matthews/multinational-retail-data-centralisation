@@ -20,7 +20,8 @@ class DataCleaning:
         df = self.remove_nonsense(df)
         print('removed nonsense ' + str(len(df)))
         # Reset index
-        #df = df.reset_index(drop=True)
+        #
+        df = df.reset_index(drop=True)
         df = df[df.first_name != 'NULL']
         # Clean phone number column
         df.loc[:, 'phone_number'] = df.loc[:,'phone_number'].str.replace(r'^(?:\(\+\d+\))|\D', '', regex=True)
@@ -39,7 +40,7 @@ class DataCleaning:
         df.loc[:, 'country_code'] = df.loc[:, 'country_code'].astype(str).apply(lambda x: x.replace('GGB', 'GB'))
         print('Edit GGB to GB ' + str(len(df)))
 
-        df = df.dropna(subset=['user_uuid'])
+        df = df.dropna(how='all', subset=['user_uuid'])
         print('dropna ' + str(len(df)))
 
         return df
@@ -51,7 +52,7 @@ class DataCleaning:
         'expiration_date' column to datetime type.
         :param df: The parameter `df` is a pandas DataFrame that contains card data
         """
-        df = df.dropna()
+        df = df.dropna(how='all')
         df = self.remove_nonsense(df)
         df = df.reset_index(drop=True)
         
@@ -72,14 +73,13 @@ class DataCleaning:
         """
 
         df = self.remove_nonsense(df)
-        df = df.dropna(subset=['address', 'latitude', 'longitude'])
+        df = df.dropna(how='all', subset=['address', 'latitude', 'longitude'])
         df.loc[:, 'longitude'] = pd.to_numeric(df.loc[:, 'longitude'], errors='coerce')
         df.loc[:, 'latitude'] = pd.to_numeric(df.loc[:,'latitude'], errors='coerce')
         df.loc[:, 'staff_numbers'] = df.loc[:,'staff_numbers'].str.replace(r'^(?:\(\+\d+\))|\D', '', regex=True)
         df.loc[:, 'opening_date'] = pd.to_datetime(df.loc[:, 'opening_date'].astype(str), format='mixed', errors='coerce')
         df = df.drop(['lat'], axis=1)
         df = df[df['address'].str.len() > 5]
-        df = df.drop_duplicates(subset=['address', 'latitude', 'longitude'], keep='first')
         df = df.reset_index(drop=True)
 
         return df

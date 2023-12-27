@@ -27,14 +27,16 @@ print('uploaded dim_card_details')
 #Retrieves the number of stores from an API and then uses that information to retrieve accurate store data before cleaning and uploading to dim_store_data.
 print(' The next step might take some time... Please be patient.')
 
-#print(clean_payment_data)
+#print(clean_payment_data) -- Used for debugging.
 
 api_key = 'yFBQbwXe9J3sd6zWVAMrK6lcxxr0q1lr2PT6DDMX'
 number_of_stores_endpoint = 'https://aqj7u5id95.execute-api.eu-west-1.amazonaws.com/prod/number_stores'
 retrieve_store_endpoint = 'https://aqj7u5id95.execute-api.eu-west-1.amazonaws.com/prod/store_details/{store_number}'
+
 # Connects to API to retrieve the number of stores.
 num_stores = extractor.list_number_of_stores(number_of_stores_endpoint)
-#print("Value of num_stores:", num_stores)
+
+#print("Value of num_stores:", num_stores) -- Used for debugging. 
 
 # Connects to API to collect store information and passes it as a Dataframe.
 store_df = extractor.retrieve_stores_data(452)
