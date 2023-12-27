@@ -1,12 +1,11 @@
 --Changes data types to correct formatting in 'orders_table' table.
-CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 
 ALTER TABLE orders_table
-    ALTER COLUMN date_uuid SET DATA TYPE UUID USING (uuid_generate_v4());
+    ALTER COLUMN date_uuid TYPE UUID USING date_uuid::UUID;
 ALTER TABLE orders_table
-    ALTER COLUMN user_uuid SET DATA TYPE UUID USING (uuid_generate_v4());
+    ALTER COLUMN user_uuid TYPE UUID USING user_uuid::UUID;
 ALTER TABLE orders_table
-    ALTER COLUMN card_number TYPE VARCHAR(19);
+    ALTER COLUMN card_number TYPE VARCHAR(25);
 ALTER TABLE orders_table
     ALTER COLUMN store_code TYPE VARCHAR(12);
 ALTER TABLE orders_table
@@ -25,7 +24,7 @@ ALTER TABLE dim_users
 ALTER TABLE dim_users
     ALTER COLUMN country_code TYPE VARCHAR(3);
 ALTER TABLE dim_users
-    ALTER COLUMN user_uuid TYPE UUID USING (uuid_generate_v4());
+    ALTER COLUMN user_uuid TYPE UUID USING user_uuid::UUID;
 ALTER TABLE dim_users
     ALTER COLUMN join_date TYPE DATE;
 
@@ -36,8 +35,8 @@ ALTER TABLE dim_store_details
     ALTER COLUMN locality TYPE VARCHAR(255);
 ALTER TABLE dim_store_details
     ALTER COLUMN store_code TYPE VARCHAR(12);
---ALTER TABLE dim_store_details
-    --ALTER COLUMN staff_numbers TYPE integer USING (trim(staff_numbers)::integer);
+ALTER TABLE dim_store_details
+    ALTER COLUMN staff_numbers TYPE integer USING (trim(staff_numbers)::integer);
 ALTER TABLE dim_store_details
     ALTER COLUMN opening_date TYPE DATE;
 ALTER TABLE dim_store_details
@@ -68,7 +67,7 @@ ALTER TABLE dim_products
 ALTER TABLE dim_products
     ALTER COLUMN date_added TYPE DATE;
 ALTER TABLE dim_products
-    ALTER COLUMN uuid TYPE UUID USING (uuid_generate_v4());
+    ALTER COLUMN uuid TYPE UUID USING uuid::UUID;
 ALTER TABLE dim_products
     ALTER COLUMN weight_class TYPE VARCHAR(255);
 
@@ -101,11 +100,11 @@ ALTER TABLE dim_date_times
 ALTER TABLE dim_date_times
     ALTER COLUMN time_period TYPE VARCHAR(100);
 ALTER TABLE dim_date_times
-    ALTER COLUMN date_uuid TYPE UUID USING (uuid_generate_v4());
+    ALTER COLUMN date_uuid TYPE UUID USING date_uuid::UUID;
 
 ALTER TABLE dim_card_details
-    ALTER COLUMN card_number TYPE VARCHAR(19);
+    ALTER COLUMN card_number TYPE VARCHAR(25);
 ALTER TABLE dim_card_details
     ALTER COLUMN expiry_date TYPE VARCHAR(5);
 ALTER TABLE dim_card_details
-    ALTER COLUMN date_payment_confirmed TYPE DATE;
+    ALTER COLUMN date_payment_confirmed TYPE DATE USING date_payment_confirmed::date;

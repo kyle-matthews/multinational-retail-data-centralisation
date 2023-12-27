@@ -52,12 +52,22 @@ class DataCleaning:
         'expiration_date' column to datetime type.
         :param df: The parameter `df` is a pandas DataFrame that contains card data
         """
+        card_list = ['Diners Club / Carte Blanche', 'American Express', 'JCB 16 digit', 'JCB 15 digit', 
+        'Maestro', 'Mastercard', 'Discover', 'VISA 19 digit',
+        'VISA 16 digit', 'VISA 13 digit']
         df = df.dropna(how='all')
-        df = self.remove_nonsense(df)
+        print(df.head(5))
+        #df = self.remove_nonsense(df)
+        df = df[df['card_provider'].isin(card_list)]
+        print(df.head(5))
+        df.loc[:, 'card_number'] = df.loc[:, 'card_number'].astype(str).apply(lambda x: x.replace('?', ''))
+        print(df.head(5))
         df = df.reset_index(drop=True)
-        
-        df['card_number'] = pd.to_numeric(df['card_number'], errors='coerce')
-        df["date_payment_confirmed"] = df["date_payment_confirmed"].apply(lambda x: parse(x))
+        #print(df.head(5))
+        df['card_number'] = df['card_number'].apply(pd.to_numeric, errors='coerce')
+        print(df.head(5))
+        #df["date_payment_confirmed"] = df["date_payment_confirmed"].apply(lambda x: parse(x))
+
         return df
 
     def clean_store_data(self, df):
@@ -73,7 +83,7 @@ class DataCleaning:
         """
 
         df = self.remove_nonsense(df)
-        df = df.dropna(how='all', subset=['address', 'latitude', 'longitude'])
+        df = df.dropna(how='all')
         df.loc[:, 'longitude'] = pd.to_numeric(df.loc[:, 'longitude'], errors='coerce')
         df.loc[:, 'latitude'] = pd.to_numeric(df.loc[:,'latitude'], errors='coerce')
         df.loc[:, 'staff_numbers'] = df.loc[:,'staff_numbers'].str.replace(r'^(?:\(\+\d+\))|\D', '', regex=True)
@@ -146,7 +156,7 @@ class DataCleaning:
         :return: the modified dataframe after removing the rows that match the specified regular expression
         pattern.
         """
-        df.replace(r'^[A-Z0-9]{8,10}$', None, regex=True, inplace=True)
+        df.replace(r'^[A-Z0-9]{8,10}$', None, inplace=True, regex=True)
         return df
     
         """

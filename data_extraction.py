@@ -36,7 +36,8 @@ class DataExtractor:
             from the PDF file.
             """
             payment_data = tabula.read_pdf(link, pages='all')
-            payment_data_df = payment_data[0]
+            payment_data_df = pd.concat(payment_data)
+
             return payment_data_df
         
         def __init__(self):
@@ -59,7 +60,7 @@ class DataExtractor:
             
         def retrieve_stores_data(self, num_stores: int):
             all_stores_data = []
-            store_number = 1
+            store_number = 0
             while store_number <= num_stores: 
                 #print(store_number)
                 store_endpoint = f'https://aqj7u5id95.execute-api.eu-west-1.amazonaws.com/prod/store_details/{store_number}'
