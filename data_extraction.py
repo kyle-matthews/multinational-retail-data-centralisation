@@ -60,16 +60,14 @@ class DataExtractor:
             
         def retrieve_stores_data(self, num_stores: int):
             all_stores_data = []
-            store_number = 0
-            while store_number <= num_stores: 
-                #print(store_number)
+            
+            for store_number in range(num_stores):
                 store_endpoint = f'https://aqj7u5id95.execute-api.eu-west-1.amazonaws.com/prod/store_details/{store_number}'
                 response = requests.get(store_endpoint, headers=self.header)
-                store_number +=1
-                #print(store_number)
-                
+                print(store_number)
                 store_data = response.json()
                 all_stores_data.append(store_data)
+            
             store_data_df = pd.DataFrame([store for store in all_stores_data if isinstance(store, dict)])
             return store_data_df
         

@@ -86,10 +86,15 @@ class DataCleaning:
         df = df.dropna(how='all')
         df.loc[:, 'longitude'] = pd.to_numeric(df.loc[:, 'longitude'], errors='coerce')
         df.loc[:, 'latitude'] = pd.to_numeric(df.loc[:,'latitude'], errors='coerce')
+        print('After long/lat: ', df['store_code'].unique())
         df.loc[:, 'staff_numbers'] = df.loc[:,'staff_numbers'].str.replace(r'^(?:\(\+\d+\))|\D', '', regex=True)
+        print('after staff numbers :', df['store_code'].unique())
         df.loc[:, 'opening_date'] = pd.to_datetime(df.loc[:, 'opening_date'].astype(str), format='mixed', errors='coerce')
+        print('after date_time conversion :', df['store_code'].unique())
         df = df.drop(['lat'], axis=1)
-        df = df[df['address'].str.len() > 5]
+        print('dropping lat :', df['store_code'].unique())
+        #df = df[df['address'].str.len() >= 3]
+        print('after address check :', df['store_code'].unique())
         df = df.reset_index(drop=True)
 
         return df

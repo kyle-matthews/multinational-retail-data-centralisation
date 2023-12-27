@@ -40,9 +40,9 @@ num_stores = extractor.list_number_of_stores(number_of_stores_endpoint)
 
 #print("Value of num_stores:", num_stores) -- Used for debugging. 
 
-"""# Connects to API to collect store information and passes it as a Dataframe.
-store_df = extractor.retrieve_stores_data(452)
-#print(store_df.head(5))"""
+# Connects to API to collect store information and passes it as a Dataframe.
+store_data_df = extractor.retrieve_stores_data(452)
+#print(store_df.head(5))
 
 store_data_df = pd.read_csv('extracted_store_data.csv')
 cleaned_store_data_df = cleaner.clean_store_data(store_data_df)
