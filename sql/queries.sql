@@ -1,0 +1,1 @@
+--This is where queries on the sales_data database will be stored.
