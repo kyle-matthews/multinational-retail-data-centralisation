@@ -27,7 +27,6 @@ class DataCleaning:
             r"^(?:\(\+\d+\))|\D", "", regex=True
         )
         print("replacing non digit in phone number " + str(len(df)))
-        # df['join_date'] = df['join_date'].str.replace(r'^(?:\(\+\d+\))|\D', '', regex=True)
 
         # Convert date_of_birth and join_date to datetime format
         df.loc[:, "date_of_birth"] = df.loc[:, "date_of_birth"].apply(
@@ -38,8 +37,6 @@ class DataCleaning:
             pd.to_datetime, errors="ignore"
         )
         print("Join date Datetime " + str(len(df)))
-        # Drop rows with missing values in specified columns - Removed due to inconsistencies between foreign key user_uuid
-        # df.dropna(subset=['date_of_birth', 'country_code'], inplace=True)
 
         # Replace 'GGB' with 'GB' in country_code column
         df.loc[:, "country_code"] = (
@@ -74,19 +71,12 @@ class DataCleaning:
             "VISA 13 digit",
         ]
         df = df.dropna(how="all")
-        print(df.head(5))
-        # df = self.remove_nonsense(df)
         df = df[df["card_provider"].isin(card_list)]
-        print(df.head(5))
         df.loc[:, "card_number"] = (
             df.loc[:, "card_number"].astype(str).apply(lambda x: x.replace("?", ""))
         )
-        print(df.head(5))
         df = df.reset_index(drop=True)
-        # print(df.head(5))
         df["card_number"] = df["card_number"].apply(pd.to_numeric, errors="coerce")
-        print(df.head(5))
-        # df["date_payment_confirmed"] = df["date_payment_confirmed"].apply(lambda x: parse(x))
 
         return df
 
@@ -106,19 +96,14 @@ class DataCleaning:
         df = df.dropna(how="all")
         df.loc[:, "longitude"] = pd.to_numeric(df.loc[:, "longitude"], errors="coerce")
         df.loc[:, "latitude"] = pd.to_numeric(df.loc[:, "latitude"], errors="coerce")
-        print("After long/lat: ", df["store_code"].unique())
         df.loc[:, "staff_numbers"] = df.loc[:, "staff_numbers"].str.replace(
             r"^(?:\(\+\d+\))|\D", "", regex=True
         )
-        print("after staff numbers :", df["store_code"].unique())
         df.loc[:, "opening_date"] = pd.to_datetime(
             df.loc[:, "opening_date"].astype(str), format="mixed", errors="coerce"
         )
-        print("after date_time conversion :", df["store_code"].unique())
         df = df.drop(["lat"], axis=1)
-        print("dropping lat :", df["store_code"].unique())
-        # df = df[df['address'].str.len() >= 3]
-        print("after address check :", df["store_code"].unique())
+
         df = df.loc[:, ~df.columns.str.contains("^Unnamed")]
 
         df = df.reset_index(drop=True)
@@ -237,14 +222,9 @@ class DataCleaning:
 
     def clean_date_times(self, df):
         df = self.remove_nonsense(df)
-        print("nonsense removed")
         df["month"] = pd.to_numeric(df["month"], errors="coerce")
-        print("month numericed")
         df["year"] = pd.to_numeric(df["year"], errors="coerce")
-        print("year numericed")
         df["day"] = pd.to_numeric(df["day"], errors="coerce")
-        print("day numericed")
         df = df.dropna()
-        print("df dropnad")
 
         return df
