@@ -1,6 +1,6 @@
 import pandas as pd
 
-df = pd.read_csv('extracted_payment_data.csv')
-unique_cards = df['card_provider'].unique()
+df = pd.read_csv('extracted_store_data.csv')
+unique_store_types = df['store_type'].unique()
 
-print(unique_cards)
+print(unique_store_types)

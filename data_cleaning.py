@@ -81,8 +81,8 @@ class DataCleaning:
         :param df: The parameter `df` is a pandas DataFrame that contains store data
         :return: the cleaned and filtered dataframe.
         """
-
-        df = self.remove_nonsense(df)
+        store_type = ['Web Portal', 'Local', 'Super Store', 'Mall Kiosk', 'Outlet']
+        df = df[df['store_type'].isin(store_type)]
         df = df.dropna(how='all')
         df.loc[:, 'longitude'] = pd.to_numeric(df.loc[:, 'longitude'], errors='coerce')
         df.loc[:, 'latitude'] = pd.to_numeric(df.loc[:,'latitude'], errors='coerce')
@@ -95,6 +95,8 @@ class DataCleaning:
         print('dropping lat :', df['store_code'].unique())
         #df = df[df['address'].str.len() >= 3]
         print('after address check :', df['store_code'].unique())
+        df = df.loc[:, ~df.columns.str.contains('^Unnamed')]
+        
         df = df.reset_index(drop=True)
 
         return df
