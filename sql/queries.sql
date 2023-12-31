@@ -12,3 +12,29 @@ GROUP BY locality
 ORDER BY total_no_stores DESC;
 
 --Queries which months produce the most sales.
+SELECT
+    ROUND(SUM(dim_products.product_price * orders_table.product_quantity), 2) AS total_sales,
+    dim_date_times.month AS month
+FROM
+    orders_table
+JOIN
+    dim_products ON orders_table.product_code = dim_products.product_code
+JOIN
+    dim_date_times ON orders_table.date_uuid = dim_date_times.date_uuid
+GROUP BY
+    month
+ORDER BY
+    total_sales DESC;
+
+--Compares online and offline sales. 
+SELECT
+    dim_store_details.locality AS location,
+    SUM(orders_table.product_quantity) AS product_quantity_count,
+	COUNT(orders_table.user_uuid) AS number_of_sales
+FROM
+    orders_table
+JOIN
+    dim_store_details ON orders_table.store_code = dim_store_details.store_code
+GROUP BY
+    CASE WHEN dim_store_details.locality IS NOT NULL THEN 'offline' ELSE 'online' END;
+
