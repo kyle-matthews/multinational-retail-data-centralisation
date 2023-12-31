@@ -26,15 +26,15 @@ GROUP BY
 ORDER BY
     total_sales DESC;
 
---Compares online and offline sales. 
-SELECT
-    dim_store_details.locality AS location,
-    SUM(orders_table.product_quantity) AS product_quantity_count,
-	COUNT(orders_table.user_uuid) AS number_of_sales
-FROM
-    orders_table
-JOIN
-    dim_store_details ON orders_table.store_code = dim_store_details.store_code
-GROUP BY
-    CASE WHEN dim_store_details.locality IS NOT NULL THEN 'offline' ELSE 'online' END;
+--Compares online and offline sales.
+SELECT COUNT(orders_table.user_uuid) AS number_of_sales,
+       SUM(orders_table.product_quantity) AS product_quantity_count,
+       CASE
+           WHEN dim_store_details.store_type = 'Web Portal' THEN 'web'
+           ELSE 'offline'
+       END AS location
+FROM orders_table
+JOIN dim_store_details ON orders_table.store_code = dim_store_details.store_code
+GROUP BY location
+ORDER BY product_quantity_count ASC
 
