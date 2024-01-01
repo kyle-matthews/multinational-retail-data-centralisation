@@ -1,0 +1,5 @@
+HOST: "localhost"
+DATABASE: "sales_data"
+USER: "postgres"
+PASSWORD: "kylethr00lz"
+PORT: '5432'

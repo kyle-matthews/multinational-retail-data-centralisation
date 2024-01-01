@@ -90,6 +90,7 @@ ALTER COLUMN continent TYPE VARCHAR(255);
 UPDATE dim_products
 SET product_price = REPLACE(product_price,'£','')::FLOAT;
 
+
 ALTER TABLE dim_products
 ALTER COLUMN product_price TYPE numeric USING (product_price::numeric);
 
@@ -146,15 +147,15 @@ SET weight_class = CASE
 
 
 ALTER TABLE dim_date_times
-ALTER COLUMN month TYPE VARCHAR(100);
+ALTER COLUMN month TYPE VARCHAR(10);
 
 
 ALTER TABLE dim_date_times
-ALTER COLUMN year TYPE VARCHAR(100);
+ALTER COLUMN year TYPE VARCHAR(4);
 
 
 ALTER TABLE dim_date_times
-ALTER COLUMN day TYPE VARCHAR (100);
+ALTER COLUMN day TYPE VARCHAR (2);
 
 
 ALTER TABLE dim_date_times

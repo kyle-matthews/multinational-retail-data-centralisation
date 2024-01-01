@@ -1,6 +1,4 @@
 import pandas as pd
-from database_utils import DatabaseConnector
-from sqlalchemy import create_engine
 import tabula
 import requests
 import boto3
