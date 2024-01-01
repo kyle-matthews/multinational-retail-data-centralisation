@@ -89,3 +89,26 @@ WHERE country_code = 'DE'
 GROUP BY store_type,
          country_code
 ORDER BY total_sales ASC;
+
+--Queries how quickly the company are making sales and sorts it by year.
+WITH cte1 AS
+    (SELECT CONCAT_WS (' ', year, month, day, timestamp) AS time_stamp,
+            year
+     FROM dim_date_times),
+     cte2 AS
+    (SELECT year,
+            time_stamp,
+            LEAD(time_stamp, 1) OVER (
+                                      ORDER BY time_stamp) AS offset_time_stamp
+     FROM cte1),
+     cte3 AS
+    (SELECT year,
+            CAST(offset_time_stamp as timestamp) - CAST(time_stamp AS timestamp) AS time_taken
+     FROM cte2
+	)
+SELECT year,
+       AVG(time_taken) actual_time_taken
+	   FROM cte3
+GROUP BY year
+ORDER BY actual_time_taken DESC;
+
